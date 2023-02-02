@@ -14,45 +14,57 @@ public class PythonHandler
         runtime = Runtime.getRuntime();
     }
 
-    public void execute()
+    public void run()
     {
-        String[] commands = {pyexe.getAbsolutePath()};
-
-        // Attempt to run the python executable
-        try
+        // Check if python based executable actually exists
+        if (pyexe.exists() == false)
         {
-            process = runtime.exec(commands);
-        }
-        catch (IOException e)
-        {
-            System.out.println("Error");
+            System.out.println("This file doesn't exist");
             return;
         }
 
-        BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-        String s = null;
-        while (true)
+        try
         {
+            // Attempt to run the executable
+            String[] commands = {pyexe.getAbsolutePath()};
+            process = runtime.exec(commands);
+
+            // Attempt to read the output
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
             try
             {
-                s = stdInput.readLine();
-                if (s == null)
+                String s = stdInput.readLine();
+                while (s != null)
                 {
-                    break;
+                    System.out.println(s);
+                    s = stdInput.readLine();
                 }
-                System.out.println(s);
             }
             catch (IOException e)
             {
-                break;
+                System.out.println("Something went wrong while reading the output: " + pyexe.getAbsolutePath());
+                process.destroy();
+                process = null;
             }
         }
+        catch (IOException e)
+        {
+            System.out.println("Failed to execute: " + pyexe.getAbsolutePath());
+            process.destroy();
+            process = null;
+        }
+    }
+
+    public void end()
+    {
+        process.destroy();
+        process = null;
     }
 
     public String getFullPath()
     {
-        if (pyexe != null)
+        // Check if python based executable actually exists
+        if (pyexe.exists())
         {
             return pyexe.getAbsolutePath();
         }
