@@ -6,7 +6,7 @@ public class AppWindow extends JFrame
     public AppWindow()
     {
         // Initialise components
-        ImageIcon defaultIcon = new ImageIcon("main/assets/icon.png"); // Creates the default icon to be used
+        ImageIcon defaultIcon = new ImageIcon("main/assets/images/icon.png"); // Creates the default icon to be used
 
         // Modify the frame
         this.setTitle("W A V E • Skeleton Program"); // Sets the title of the frame
