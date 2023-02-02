@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 public class Main
 {
@@ -12,6 +13,6 @@ public class Main
 
         // Connect to our python helper
         PythonHandler helper = new PythonHandler("main/assets/python/gesture_helper.exe");
-        System.out.println(helper.getFullPath());
+        helper.execute();
     }
 }
