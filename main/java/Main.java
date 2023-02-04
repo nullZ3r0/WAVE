@@ -27,9 +27,11 @@ public class Main
 
         // Initialise the main container
         AppContainer mainContainer = new AppContainer();
+
+        // Add the main container to the application window
         mainWindow.add(mainContainer);
 
-        // Example switching between two different frames and changing the background colour of one
+        // Example: switching between two different frames and changing the background colour of one
         // Initialise the first frame
         AppFrame frame1 = new AppFrame();
         frame1.setLayout(new FlowLayout(FlowLayout.CENTER, 12, 12));
