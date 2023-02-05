@@ -24,15 +24,28 @@ class ButtonTheme
 
 public class AppTheme
 {
+    public static Color error = new Color(220,28, 227);
     public static Color window;
     public static Color background;
     public static Color foreground;
     public static Font titleFont;
     public static Font textFont;
-    public static HashMap<String, Color> customColours = new HashMap<String, Color>();
+    private static HashMap<String, Color> customColours = new HashMap<String, Color>();
 
     public static ButtonTheme button;
     public static FrameTheme frame;
+
+    public static Color getCustomColor(String colorName)
+    {
+        Color retrieved = AppTheme.customColours.get(colorName);
+        if (retrieved == null)
+        {
+            System.out.println("This custom colour could not be found!");
+            retrieved = error;
+        }
+
+        return retrieved;
+    }
 
     private static void StandardTheme()
     {

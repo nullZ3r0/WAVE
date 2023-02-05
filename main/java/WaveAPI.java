@@ -11,13 +11,13 @@ public class WaveAPI
 
         // We will change the colour of an AppFrame
         Color currentColor = frame.getBackground();
-        if (currentColor.equals(AppTheme.customColours.get("uniqueSpecial")))
+        if (currentColor.equals(AppTheme.getCustomColor("uniqueSpecial")))
         {
             frame.setBackground(new Color(116, 65, 204));
         }
         else
         {
-            frame.setBackground(AppTheme.customColours.get("uniqueSpecial"));
+            frame.setBackground(AppTheme.getCustomColor("uniqueSpecial"));
         }
     }
 

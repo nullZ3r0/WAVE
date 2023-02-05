@@ -48,7 +48,9 @@ public class Main
         // Initialise the second frame
         AppFrame frame2 = new AppFrame();
         frame2.setLayout(new FlowLayout(FlowLayout.CENTER, 12, 12));
-        frame2.setBackground(AppTheme.customColours.get("uniqueSpecial"));
+
+        // This custom colour doesn't exist in the standard theme, let's see what happens
+        frame2.setBackground(AppTheme.getCustomColor("uniqueSpecial2"));
 
         // Initialise first button to add
         AppButton button2 = new AppButton("Switch to frame1");
