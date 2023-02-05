@@ -5,7 +5,7 @@ import java.io.IOException;
 public class MIDIreader {
     public static void main(String[] args) {
         try {
-            File midiFile = new File("test01.mid");
+            File midiFile = new File("main/assets/midi/Sample.mid");
             // Accessing the MIDI file data using SEQUENCE class
             Sequence sequence = MidiSystem.getSequence(midiFile);
 

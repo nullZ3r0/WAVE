@@ -10,7 +10,7 @@ public class MIDIplayer {
     public static void main(String[] args) {
         try {
             // Load the MIDI file as SEQUENCE class
-            Sequence sequence = MidiSystem.getSequence(new File("test01.mid"));
+            Sequence sequence = MidiSystem.getSequence(new File("main/assets/midi/Sample.mid"));
             // Introduce sequencer to handle the MIDI data
             Sequencer sequencer = MidiSystem.getSequencer();
             if (sequencer==null) {
