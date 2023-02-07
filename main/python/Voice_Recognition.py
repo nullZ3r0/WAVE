@@ -6,9 +6,13 @@
 # Imports
 import speech_recognition
 import pyttsx3
+import socket
+import time
 
 # Variables
 r = speech_recognition.Recognizer()
+UDP_IP = "127.0.0.1"
+UDP_PORT = 5005
 
 def voice(command):
     engine = pyttsx3.init()
@@ -23,8 +27,14 @@ while(1):
             MyText = r.recognize_vosk(audio2)
             MyText = MyText.lower()
 
+            MESSAGE = b"Voice: "
+            MESSAGE += MyText[14:-3].encode()
 
-            print("Did you say ", MyText[14:-3])
+            sock = socket.socket(socket.AF_INET,
+                                socket.SOCK_DGRAM)
+            sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
+
+            MESSAGE = b""
             
     except speech_recognition.RequestError as e:
         print("Could not request results; {0}".format(e))
