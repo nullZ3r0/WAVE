@@ -1,5 +1,5 @@
 # Lukas Maslianikas
-# WAVE Project - Voice_V1 - Python
+# WAVE Project - Voice V1 - Python
 # 19/02/2023
 # # # # # # # # # #
 
