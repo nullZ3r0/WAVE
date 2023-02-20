@@ -14,6 +14,7 @@ r = speech_recognition.Recognizer()
 UDP_IP = "127.0.0.1" # Localhost as 127.0.0.1
 UDP_PORT = 5005      # Port as 5005
 
+# Program Start
 def voice(command):         # Sets up the voice commands to start recieving input
     engine = pyttsx3.init() # <
     engine.say(command)     # <
