@@ -22,8 +22,15 @@ public class Main
         System.out.println("Hello world!");
         setupWindowTheme();
 
+        // Initialise custom render thread
+        WaveGraphics customRenderer = new WaveGraphics();
+        customRenderer.setDaemon(true);
+        customRenderer.start();
+
         // Initialise application window
         AppWindow mainWindow = new AppWindow();
+        mainWindow.setExtendedState(mainWindow.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+        mainWindow.setMinimumSize(new Dimension(720, 360));
 
         // Initialise the main container
         AppContainer mainContainer = new AppContainer();
@@ -31,44 +38,34 @@ public class Main
         // Add the main container to the application window
         mainWindow.add(mainContainer);
 
-        // Example: switching between two different frames and changing the background colour of one
-        // Initialise the first frame
-        AppFrame frame1 = new AppFrame();
-        frame1.setLayout(new FlowLayout(FlowLayout.CENTER, 12, 12));
+        // Initialise the menu frame
+        // This will contain all the elements needed for the menu
+        AppFrame menuFrame = new AppFrame();
+        menuFrame.setLayout(null);
 
+        // Create button holder
+        AppFrame buttonHolder = new AppFrame();
+        buttonHolder.setBackground(AppTheme.getCustomColor("uniqueSpecial"));
+        buttonHolder.transform.setSize(1, 100, .5, 0);
+        buttonHolder.transform.setPosition(0, 0, .5, 0);
+        buttonHolder.enableAbsoluteBounds(true);
+
+        // Add the button holder to the menu frame via the custom renderer
+        WaveGraphics.addChild(menuFrame, buttonHolder);
+        //menuFrame.add(buttonHolder);
+
+        /*
         // Initialise buttons to add
-        AppButton button1 = new AppButton("Switch to frame2");
+        AppButton button1 = new AppButton("Button 1");
 
         // We will call an API method called nextCard, passing it an AppContainer directly
-        button1.addActionListener(e -> WaveAPI.nextCard(mainContainer));
+        button1.addActionListener(e -> WaveAPI.debugButton());
 
         // Add the button to the first frame
-        frame1.add(button1);
-
-        // Initialise the second frame
-        AppFrame frame2 = new AppFrame();
-        frame2.setLayout(new FlowLayout(FlowLayout.CENTER, 12, 12));
-
-        // This custom colour doesn't exist in the standard theme, let's see what happens
-        frame2.setBackground(AppTheme.getCustomColor("uniqueSpecial2"));
-
-        // Initialise first button to add
-        AppButton button2 = new AppButton("Switch to frame1");
-
-        // We will call an API method called nextCard, passing it a Container (Usually an AppContainer) indirectly (for learning purposes)
-        // Why does getParent need to be called twice?
-        button2.addActionListener(e -> WaveAPI.nextCard(button2.getParent().getParent()));
-
-        // We will call an API method called test, passing it a Container (Usually an AppFrame)
-        AppButton button3 = new AppButton("Change background colour");
-        button3.addActionListener(e -> WaveAPI.test(frame2));
-
-        // Add the buttons to the second frame
-        frame2.add(button2);
-        frame2.add(button3);
+        menuFrame.add(button1);
+         */
 
         // Add the frames to the main AppContainer
-        mainContainer.add(frame1);
-        mainContainer.add(frame2);
+        mainContainer.add(menuFrame);
     }
 }

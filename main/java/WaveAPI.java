@@ -21,6 +21,11 @@ public class WaveAPI
         }
     }
 
+    public static void debugButton()
+    {
+        System.out.println("This button has been pressed");
+    }
+
     public static void nextCard(Container container)
     {
         System.out.println("Test API: nextCard");

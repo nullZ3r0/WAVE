@@ -14,7 +14,7 @@ public class AppWindow extends JFrame
         this.setSize(540, 540); // Sets the x-dimension and y-dimension of the window
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Terminate the application when the X is hit
         this.setIconImage(defaultIcon.getImage()); // Set the window icon to the image given
-        //this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+        this.setMinimumSize(new Dimension(360, 360));
 
         // Make the frame visible
         this.setVisible(true);
