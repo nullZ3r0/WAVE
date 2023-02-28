@@ -67,7 +67,7 @@ public class AppTheme
         button.backgroundHover = backgroundLight2;
         button.backgroundPressed = backgroundDark3;
         button.foreground = foreground;
-        button.cornerRadius = 0;
+        button.cornerRadius = 12;
 
         frame = new FrameTheme();
         frame.background = background;

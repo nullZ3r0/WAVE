@@ -45,25 +45,35 @@ public class Main
 
         // Create button holder
         AppFrame buttonHolder = new AppFrame();
+        buttonHolder.setLayout(new FlowLayout(FlowLayout.CENTER, 12, 24));
         buttonHolder.setBackground(AppTheme.getCustomColor("uniqueSpecial"));
-        buttonHolder.transform.setSize(1, 100, .5, 0);
-        buttonHolder.transform.setPosition(0, 0, .5, 0);
-        buttonHolder.enableAbsoluteBounds(true);
+        buttonHolder.transform.setSize(0, 100, 0.30, 1);
+        buttonHolder.transform.setPosition(0, 0, 0, 0);
+        buttonHolder.transform.addConstraint(new UISizeConstraint(250,400,0,9999));
 
         // Add the button holder to the menu frame via the custom renderer
         WaveGraphics.addChild(menuFrame, buttonHolder);
-        //menuFrame.add(buttonHolder);
 
-        /*
         // Initialise buttons to add
         AppButton button1 = new AppButton("Button 1");
-
-        // We will call an API method called nextCard, passing it an AppContainer directly
+        button1.transform.setSize(-20, 34, 1, 0);
+        button1.transform.addConstraint(new UISizeConstraint(0,300,0,9999));
         button1.addActionListener(e -> WaveAPI.debugButton());
 
-        // Add the button to the first frame
-        menuFrame.add(button1);
-         */
+        AppButton button2 = new AppButton("Button 2");
+        button2.transform.setSize(-20, 34, 1, 0);
+        button2.addActionListener(e -> WaveAPI.debugButton());
+        WaveGraphics.addChild(buttonHolder, button1);
+        WaveGraphics.addChild(buttonHolder, button2);
+
+        // Create divider
+        AppFrame dividerFrame = new AppFrame();
+        dividerFrame.setBackground(AppTheme.error);
+        dividerFrame.transform.setSize(2, 0, 0, 1);
+        dividerFrame.transform.setPosition(40, 0, 0.3, 0);
+        dividerFrame.transform.addConstraint(new UIPositionConstraint(290,440,0,9999));
+
+        WaveGraphics.addChild(menuFrame, dividerFrame);
 
         // Add the frames to the main AppContainer
         mainContainer.add(menuFrame);
