@@ -49,8 +49,27 @@ public class WaveGraphics extends Thread
                     }
                 }
 
-                // Set bounds
-                frame.setBounds(convertedX, convertedY, convertedWidth, convertedHeight);
+                if (parent.getClass() == AppFrame.class)
+                {
+                    AppFrame parentFrame = (AppFrame) parent;
+                    if (parentFrame.getLayout() != null)
+                    {
+                        frame.setSize(convertedWidth, convertedHeight);
+                        frame.setPreferredSize(frame.getSize());
+
+                        frame.revalidate();
+                    }
+                    else
+                    {
+                        // Set bounds
+                        frame.setBounds(convertedX, convertedY, convertedWidth, convertedHeight);
+                    }
+                }
+                else
+                {
+                    // Set bounds
+                    frame.setBounds(convertedX, convertedY, convertedWidth, convertedHeight);
+                }
             }
         }
         else if (object.getClass() == AppButton.class)
@@ -96,6 +115,8 @@ public class WaveGraphics extends Thread
                     {
                         button.setSize(convertedWidth, convertedHeight);
                         button.setPreferredSize(button.getSize());
+
+                        button.revalidate();
                     }
                     else
                     {
@@ -130,12 +151,21 @@ public class WaveGraphics extends Thread
         }
         else if (object.getClass() == AppButton.class)
         {
-            AppButton frame = (AppButton) object;
-            Dimension arcs = new Dimension(Math.min(frame.transform.getCornerRadius(), height), Math.min(frame.transform.getCornerRadius(), height));
+            AppButton button = (AppButton) object;
+            Dimension arcs = new Dimension(Math.min(button.transform.getCornerRadius(), height), Math.min(button.transform.getCornerRadius(), height));
 
             // Draws the panel (can have rounded corners)
-            graphics.setColor(frame.getBackground());
+            graphics.setColor(button.getBackground());
             graphics.fillRoundRect(0, 0, width, height, arcs.width, arcs.height);
+
+            if (button.mouseIn())
+            {
+                button.setForeground(AppTheme.button.foregroundHover);
+            }
+            else
+            {
+                button.setForeground(AppTheme.button.foreground);
+            }
         }
     }
 
@@ -178,7 +208,9 @@ public class WaveGraphics extends Thread
 
             try
             {
-                Thread.sleep(2);
+                //Thread.sleep(16); // Around (60 fps)
+                //Thread.sleep(32); // Around (30 fps)
+                Thread.sleep(20); // Around (20 fps)
             }
             catch (InterruptedException e)
             {

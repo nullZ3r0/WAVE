@@ -40,6 +40,7 @@ public class AppButton extends JButton implements MouseListener
 
         // Initialise custom fonts
         this.setFont(AppTheme.button.font.deriveFont(Font.PLAIN, 16));
+        this.setHorizontalAlignment(SwingConstants.LEFT);
 
     }
 
@@ -122,4 +123,5 @@ public class AppButton extends JButton implements MouseListener
     public void useTransform(Boolean set) {useTransform = set;}
     public Boolean useTransform() {return useTransform;}
     public void useWaveGraphics(Boolean set) {useWaveGraphics = set;}
+    public boolean mouseIn() {return mouseIn;}
 }

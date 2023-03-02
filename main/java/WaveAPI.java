@@ -21,6 +21,16 @@ public class WaveAPI
         }
     }
 
+    public static void hideMenu()
+    {
+        System.out.println("Test API: This should hide the menuPanel");
+    }
+
+    public static void switchToCredits()
+    {
+        System.out.println("Test API: This show the creditsPanel on the menuPanel -> rightFrame");
+    }
+
     public static void debugButton()
     {
         System.out.println("This button has been pressed");

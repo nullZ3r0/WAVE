@@ -18,19 +18,30 @@ class ButtonTheme
     public Color backgroundHover;
     public Color backgroundPressed;
     public Color foreground;
+    public Color foregroundHover;
     public Font font;
     public int cornerRadius = 0;
 }
 
 public class AppTheme
 {
+    public static String name = "none";
     public static Color error = new Color(220,28, 227);
     public static Color window;
+    public static Color backgroundLight3;
+    public static Color backgroundLight2;
+    public static Color backgroundLight1;
     public static Color background;
+    public static Color backgroundDark1;
+    public static Color backgroundDark2;
+    public static Color backgroundDark3;
+
+    public static Color transparent = new Color(255, 255, 255, 0);
     public static Color foreground;
     public static Font titleFont;
     public static Font textFont;
     private static HashMap<String, Color> customColours = new HashMap<String, Color>();
+    private static HashMap<String, Font> fonts = new HashMap<String, Font>();
 
     public static ButtonTheme button;
     public static FrameTheme frame;
@@ -49,13 +60,18 @@ public class AppTheme
 
     private static void StandardTheme()
     {
-        Color backgroundLight3 = new Color(79, 82, 106);
-        Color backgroundLight2 = new Color(68, 71, 91);
-        Color backgroundLight1 = new Color(57, 59, 77);
+        name = "Kinetik";
+        backgroundLight3 = new Color(79, 82, 106);
+        backgroundLight2 = new Color(68, 71, 91);
+        backgroundLight1 = new Color(57, 59, 77);
         background = new Color(46, 48, 62);
-        Color backgroundDark1  = new Color(35, 37, 47);
-        Color backgroundDark2  = new Color(24, 25, 33);
-        Color backgroundDark3  = new Color(13, 14, 18);
+        backgroundDark1  = new Color(35, 37, 47);
+        backgroundDark2  = new Color(24, 25, 33);
+        backgroundDark3  = new Color(13, 14, 18);
+
+        Color white = new Color(255, 255, 255);
+        Color white25 = new Color(255, 255, 255,192);
+        Color white50 = new Color(255, 255, 255,128);
 
         Color uniqueBackground = new Color(51, 178, 115);
 
@@ -64,10 +80,11 @@ public class AppTheme
 
         button = new ButtonTheme();
         button.background = backgroundDark2;
-        button.backgroundHover = backgroundLight2;
-        button.backgroundPressed = backgroundDark3;
-        button.foreground = foreground;
-        button.cornerRadius = 12;
+        button.backgroundHover = backgroundLight1;
+        button.backgroundPressed = backgroundLight1;
+        button.foreground = white25;
+        button.foregroundHover = white;
+        button.cornerRadius = 8;
 
         frame = new FrameTheme();
         frame.background = background;
@@ -86,7 +103,13 @@ public class AppTheme
 
             Font nunitoRegular = Font.createFont(Font.TRUETYPE_FONT, new File("main/assets/fonts/Nunito-Regular.ttf"));
             textFont = nunitoRegular;
-            button.font = nunitoRegular;
+
+            //Font nunitoExtraBold = Font.createFont(Font.TRUETYPE_FONT, new File("main/assets/fonts/Nunito-ExtraBold.ttf"));
+            button.font = nunitoExtraBold;
+
+            // Example of setting the fonts
+            fonts.put("extraBold", nunitoExtraBold);
+            fonts.put("regular", nunitoRegular);
         }
         catch(IOException | FontFormatException e)
         {

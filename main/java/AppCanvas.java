@@ -1,13 +1,11 @@
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-public class AppContainer extends JPanel
+public class AppCanvas extends JPanel
 {
-    public AppContainer()
+    public AppCanvas()
     {
         this.setBackground(AppTheme.window);
         this.setLayout(new CardLayout());
