@@ -26,7 +26,6 @@ public class Main
         // Initialise custom render thread
         WaveGraphics customRenderer = new WaveGraphics();
         customRenderer.setDaemon(true);
-        customRenderer.start();
 
         // Naming hierarchy and Class hierarchy
         // appWindow (AppWindow) -> appCanvas (AppCanvas) -> appPanel (AppFrame) -> appContainers (AppFrame) -> appFrames (AppFrame) / appButtons (AppButton)
@@ -35,7 +34,7 @@ public class Main
         // Initialise application window
         AppWindow mainWindow = new AppWindow();
         mainWindow.setExtendedState(mainWindow.getExtendedState() | JFrame.MAXIMIZED_BOTH);
-        mainWindow.setMinimumSize(new Dimension(1000, 500));
+        mainWindow.setMinimumSize(new Dimension(1000, 600));
 
         // Initialise the main canvas
         AppCanvas mainCanvas = new AppCanvas();
@@ -49,7 +48,13 @@ public class Main
         // Test manipulating exposed elements
         menuPanel.resumeButton.addActionListener(e -> WaveAPI.hideMenu());
 
+        // Initialise the mainPanel
+        mainPanel mainPanel = new mainPanel();
+
         // Add the frames to the main AppContainer
         mainCanvas.add(menuPanel.self);
+
+        // Run WaveGraphics
+        customRenderer.start();
     }
 }
