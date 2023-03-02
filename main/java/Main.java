@@ -44,78 +44,12 @@ public class Main
         mainWindow.add(mainCanvas);
 
         // Initialise the menuPanel
-        // NOTE: This "setBorder(new EmptyBorder())" stuff is hacky as f###
-        // This will contain all the elements needed for the menu panel
-        AppFrame menuPanel = new AppFrame();
-        menuPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-        menuPanel.setBorder(new EmptyBorder(50,0,0,0));
+        menuPanel menuPanel = new menuPanel();
 
-        // Create leftContainer
-        AppFrame leftContainer = new AppFrame();
-        leftContainer.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 8));
-        leftContainer.setBackground(AppTheme.backgroundDark1);
-        leftContainer.transform.setSize(0, -100, 0.30, 1);
-        leftContainer.transform.setPosition(0, 0, 0, 0);
-        leftContainer.transform.addConstraint(new UISizeConstraint(300,300,0,9999));
-        leftContainer.transform.setCornerRadius(8);
-        leftContainer.setBorder(new EmptyBorder(16,0,0,0));
-
-        // Add the leftContainer to the menuPanel via the custom renderer
-        WaveGraphics.addChild(menuPanel, leftContainer);
-
-        // Initialise buttons to add
-        AppButton button1 = new AppButton("Resume Practice");
-        button1.transform.setSize(-48, 32, 1, 0);
-        button1.addActionListener(e -> WaveAPI.hideMenu());
-
-        AppButton button2 = new AppButton("Credits");
-        button2.transform.setSize(-48, 32, 1, 0);
-        button2.addActionListener(e -> WaveAPI.debugButton());
-
-        WaveGraphics.addChild(leftContainer, button1);
-        WaveGraphics.addChild(leftContainer, button2);
-
-        // Initialise dummy buttons
-        for (int i = 0; i < 10; i++)
-        {
-            AppButton dummyButton = new AppButton("Button " + String.valueOf(i + 1));
-            dummyButton.transform.setSize(-48, 32, 1, 0);
-            dummyButton.addActionListener(e -> WaveAPI.debugButton());
-            WaveGraphics.addChild(leftContainer, dummyButton);
-        }
-
-
-        // Create dividerContainer
-        AppFrame dividerContainer = new AppFrame();
-        dividerContainer.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 50));
-        dividerContainer.setBackground(AppTheme.transparent);
-        dividerContainer.transform.setSize(50, -200, 0, 1);
-        dividerContainer.setBorder(new EmptyBorder(-50,0,0,0));
-
-        // Create divider
-        AppFrame divider = new AppFrame();
-        divider.setBackground(AppTheme.foreground);
-        divider.transform.setSize(4, 0, 0, 1);
-        divider.transform.setCornerRadius(4);
-
-        // Add divider to the dividerFrame via WaveGraphics
-        WaveGraphics.addChild(dividerContainer, divider);
-
-        // Add dividerContainer to the menuPanel vai WaveGraphics
-        WaveGraphics.addChild(menuPanel, dividerContainer);
-
-
-        // Create rightContainer
-        AppFrame rightContainer = new AppFrame();
-        rightContainer.setLayout(new CardLayout());
-        rightContainer.setBackground(AppTheme.backgroundDark1);
-        rightContainer.transform.setCornerRadius(8);
-        rightContainer.transform.setSize(600, -100, 0, 1);
-
-        // Add rightFrame to the menuFrame vai WaveGraphics
-        WaveGraphics.addChild(menuPanel, rightContainer);
+        // Test manipulating exposed elements
+        menuPanel.resumeButton.addActionListener(e -> WaveAPI.hideMenu());
 
         // Add the frames to the main AppContainer
-        mainCanvas.add(menuPanel);
+        mainCanvas.add(menuPanel.self);
     }
 }

@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 
 public class WaveGraphics extends Thread
 {
@@ -201,20 +202,24 @@ public class WaveGraphics extends Thread
     {
         while (true)
         {
-            for (Component object : WaveGraphics.objects)
-            {
-                WaveGraphics.update(object);
-            }
-
             try
             {
+                for (Component object : WaveGraphics.objects)
+                {
+                    WaveGraphics.update(object);
+                }
+
                 //Thread.sleep(16); // Around (60 fps)
                 //Thread.sleep(32); // Around (30 fps)
                 Thread.sleep(20); // Around (20 fps)
             }
             catch (InterruptedException e)
             {
-
+                System.out.println("WaveGraphics was interrupted!");
+            }
+            catch (ConcurrentModificationException e)
+            {
+                System.out.println("WaveGraphics tried to modify a Collection while another thread was iterating over it!");
             }
         }
     }

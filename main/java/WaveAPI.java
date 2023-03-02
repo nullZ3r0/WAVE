@@ -28,7 +28,7 @@ public class WaveAPI
 
     public static void switchToCredits()
     {
-        System.out.println("Test API: This show the creditsPanel on the menuPanel -> rightFrame");
+        System.out.println("Test API: This show the creditsContainer on the menuPanel -> rightContainer");
     }
 
     public static void debugButton()
