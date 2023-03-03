@@ -21,9 +21,16 @@ public class WaveAPI
         }
     }
 
-    public static void hideMenu()
+    public static void hideMenu(menuPanel menuPanel)
     {
-        System.out.println("Test API: This should hide the menuPanel");
+        System.out.println("API: This should hide the menuPanel");
+        Container parent = menuPanel.self.getParent();
+        if (parent != null)
+        {
+            parent.remove(menuPanel.self);
+            parent.revalidate();
+            parent.repaint();
+        }
     }
 
     public static void switchToCredits()
@@ -45,7 +52,6 @@ public class WaveAPI
         {
             CardLayout manager = (CardLayout) currentLayoutManager;
             manager.next(container);
-
             container.revalidate();
             container.repaint();
         }

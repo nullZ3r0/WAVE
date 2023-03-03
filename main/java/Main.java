@@ -46,13 +46,15 @@ public class Main
         menuPanel menuPanel = new menuPanel();
 
         // Test manipulating exposed elements
-        menuPanel.resumeButton.addActionListener(e -> WaveAPI.hideMenu());
+        //menuPanel.resumeButton.addActionListener(e -> WaveAPI.hideMenu(menuPanel));
+        menuPanel.resumeButton.addActionListener(e -> WaveAPI.nextCard(mainCanvas));
 
         // Initialise the mainPanel
         mainPanel mainPanel = new mainPanel();
 
-        // Add the frames to the main AppContainer
+        // Add the frames to the main AppCanvas
         mainCanvas.add(menuPanel.self);
+        mainCanvas.add(mainPanel.self);
 
         // Run WaveGraphics
         customRenderer.start();

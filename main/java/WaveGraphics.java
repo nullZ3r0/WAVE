@@ -5,137 +5,118 @@ import java.util.ConcurrentModificationException;
 public class WaveGraphics extends Thread
 {
     // Static stuff
+    private static Rectangle transformToRectangle(UITransform transform, Component parent)
+    {
+        if (transform == null) {return new Rectangle();}
+        double parentWidth = 0;
+        double parentHeight = 0;
+
+        if (parent != null)
+        {
+            parentWidth = parent.getWidth();
+            parentHeight = parent.getHeight();
+        }
+
+        // Make transform compatible with java swing
+        int relativeWidth = (int) (parentWidth * transform.size.getXScale());
+        int relativeHeight = (int) (parentHeight * transform.size.getYScale());
+        int convertedWidth = transform.size.getX() + relativeWidth;
+        int convertedHeight = transform.size.getY() + relativeHeight;
+
+        int relativeX = (int) (parentWidth * transform.position.getXScale());
+        int relativeY = (int) (parentHeight * transform.position.getYScale());
+        int convertedX = transform.position.getX() + relativeX;
+        int convertedY = transform.position.getY() + relativeY;
+
+        for (UIConstraint constraint : transform.getConstraints())
+        {
+            if (constraint.getClass() == UISizeConstraint.class)
+            {
+                UISizeConstraint sizeConstraint = (UISizeConstraint) constraint;
+                convertedWidth = Math.min(convertedWidth, sizeConstraint.maxWidth());
+                convertedWidth = Math.max(convertedWidth, sizeConstraint.minWidth());
+            }
+            else if (constraint.getClass() == UIPositionConstraint.class)
+            {
+                UIPositionConstraint positionConstraint = (UIPositionConstraint) constraint;
+                convertedX = Math.min(convertedX, positionConstraint.maxX());
+                convertedX = Math.max(convertedX, positionConstraint.minX());
+            }
+        }
+
+        return new Rectangle(convertedX, convertedY, convertedWidth, convertedHeight);
+    }
+
+    private static void applyTransform(Component object, UITransform transform)
+    {
+        // Return if object or transform are null (this shouldn't really be occurring though)
+        if (object == null || transform == null) {return;}
+
+        Component parent = object.getParent();
+        Rectangle calculated = transformToRectangle(transform, parent);
+
+        if (Container.class.isAssignableFrom(parent.getClass()))
+        {
+            Container container = (Container) parent;
+            if (container.getLayout() != null)
+            {
+                object.setSize(calculated.getSize());
+                object.setPreferredSize(calculated.getSize());
+                object.revalidate();
+            }
+            else
+            {
+                // Set bounds
+                object.setBounds(calculated);
+            }
+        }
+        else
+        {
+            // Set bounds
+            object.setBounds(calculated);
+        }
+    }
     public static void update(Component object)
     {
-        // Update absoluteBounds
+        // Check if the component actually exists
+        if (object == null) {return;}
+
+        /** Update AppFrames **/
         if (object.getClass() == AppFrame.class)
         {
             AppFrame frame = (AppFrame) object;
             if (frame.useTransform() == true)
             {
-                Component parent = frame.getParent();
-                double parentWidth = 0;
-                double parentHeight = 0;
-
-                if (parent != null)
-                {
-                    parentWidth = parent.getWidth();
-                    parentHeight = parent.getHeight();
-                }
-
-                // Make translate compatible with java swing
-                int relativeWidth = (int) (parentWidth * frame.transform.size.getXScale());
-                int relativeHeight = (int) (parentHeight * frame.transform.size.getYScale());
-                int convertedWidth = frame.transform.size.getX() + relativeWidth;
-                int convertedHeight = frame.transform.size.getY() + relativeHeight;
-
-                int relativeX = (int) (parentWidth * frame.transform.position.getXScale());
-                int relativeY = (int) (parentHeight * frame.transform.position.getYScale());
-                int convertedX = frame.transform.position.getX() + relativeX;
-                int convertedY = frame.transform.position.getY() + relativeY;
-
-                for (UIConstraint constraint : frame.transform.getConstraints())
-                {
-                    if (constraint.getClass() == UISizeConstraint.class)
-                    {
-                        UISizeConstraint sizeConstraint = (UISizeConstraint) constraint;
-                        convertedWidth = Math.min(convertedWidth, sizeConstraint.maxWidth());
-                        convertedWidth = Math.max(convertedWidth, sizeConstraint.minWidth());
-                    }
-                    else if (constraint.getClass() == UIPositionConstraint.class)
-                    {
-                        UIPositionConstraint positionConstraint = (UIPositionConstraint) constraint;
-                        convertedX = Math.min(convertedX, positionConstraint.maxX());
-                        convertedX = Math.max(convertedX, positionConstraint.minX());
-                    }
-                }
-
-                if (parent.getClass() == AppFrame.class)
-                {
-                    AppFrame parentFrame = (AppFrame) parent;
-                    if (parentFrame.getLayout() != null)
-                    {
-                        frame.setSize(convertedWidth, convertedHeight);
-                        frame.setPreferredSize(frame.getSize());
-
-                        frame.revalidate();
-                    }
-                    else
-                    {
-                        // Set bounds
-                        frame.setBounds(convertedX, convertedY, convertedWidth, convertedHeight);
-                    }
-                }
-                else
-                {
-                    // Set bounds
-                    frame.setBounds(convertedX, convertedY, convertedWidth, convertedHeight);
-                }
+                applyTransform((Component) frame, frame.transform);
             }
         }
+
+        /** Update AppVisualisers **/
+        else if (object.getClass() == AppVisualiser.class)
+        {
+            AppVisualiser visualiser = (AppVisualiser) object;
+            if (visualiser.useTransform() == true)
+            {
+                applyTransform((Component) visualiser, visualiser.transform);
+            }
+        }
+
+        /** Update AppButtons */
         else if (object.getClass() == AppButton.class)
         {
             AppButton button = (AppButton) object;
             if (button.useTransform() == true)
             {
-                Component parent = button.getParent();
-                double parentWidth = 0;
-                double parentHeight = 0;
-
-                if (parent != null)
-                {
-                    parentWidth = parent.getWidth();
-                    parentHeight = parent.getHeight();
-                }
-
-                // Make translate compatible with java swing
-                int relativeWidth = (int) (parentWidth * button.transform.size.getXScale());
-                int relativeHeight = (int) (parentHeight * button.transform.size.getYScale());
-                int convertedWidth = button.transform.size.getX() + relativeWidth;
-                int convertedHeight = button.transform.size.getY() + relativeHeight;
-
-                int relativeX = (int) (parentWidth * button.transform.position.getXScale());
-                int relativeY = (int) (parentHeight * button.transform.position.getYScale());
-                int convertedX = button.transform.position.getX() + relativeX;
-                int convertedY = button.transform.position.getY() + relativeY;
-
-                for (UIConstraint constraint : button.transform.getConstraints())
-                {
-                    if (constraint.getClass() == UISizeConstraint.class)
-                    {
-                        UISizeConstraint sizeConstraint = (UISizeConstraint) constraint;
-                        convertedWidth = Math.min(convertedWidth, sizeConstraint.maxWidth());
-                        convertedWidth = Math.max(convertedWidth, sizeConstraint.minWidth());
-                    }
-                }
-
-                if (parent.getClass() == AppFrame.class)
-                {
-                    AppFrame parentFrame = (AppFrame) parent;
-                    if (parentFrame.getLayout() != null)
-                    {
-                        button.setSize(convertedWidth, convertedHeight);
-                        button.setPreferredSize(button.getSize());
-
-                        button.revalidate();
-                    }
-                    else
-                    {
-                        // Set bounds
-                        button.setBounds(convertedX, convertedY, convertedWidth, convertedHeight);
-                    }
-                }
-                else
-                {
-                    // Set bounds
-                    button.setBounds(convertedX, convertedY, convertedWidth, convertedHeight);
-                }
+                applyTransform((Component) button, button.transform);
             }
         }
     }
 
     public static void draw(Component object, Graphics g)
     {
+        // Check if the component actually exists
+        if (object == null) {return;}
+
         int width = object.getWidth();
         int height = object.getHeight();
         Graphics2D graphics = (Graphics2D) g;
