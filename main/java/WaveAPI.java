@@ -1,9 +1,12 @@
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 public class WaveAPI
 {
+    public static void connectReceiverToVisualiser(MidiInputReceiver receiver, AppVisualiser visualiser)
+    {
+        receiver.setVisualiser(visualiser);
+    }
+
     public static void showCard(Container container, String name)
     {
         System.out.println("Test API: showCard");

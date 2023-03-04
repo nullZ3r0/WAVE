@@ -8,12 +8,14 @@ class Keyboard
     {
         /** Attributes **/
         public boolean isWhite = true;
+        public int velocity = 0;
 
         /** MIDI File input attributes **/
         public boolean isPlaying = false;
 
         /** MIDI Piano input attributes **/
         public boolean isPressed = false;
+
 
         PianoKey(){}
         PianoKey(boolean _isWhite)
@@ -23,11 +25,12 @@ class Keyboard
     }
 
     /** Keyboard Public Attributes **/
-    public final int rootNote = 21; // This is A0 on a piano, anything before this won't be rendered
-    public final int tailNote = 108; // This is C8 on a piano, anything after this won't be rendered
+    public final int rootKeyValue = 21; // This is A0 on a piano, anything before this won't be rendered
+    public final int tailKeyValue = 108; // This is C8 on a piano, anything after this won't be rendered
 
     /** Keyboard Private Attributes **/
     private boolean useAutoDimensions = false;
+    private AppVisualiser parent;
     private PianoKey[] keys = new PianoKey[88]; // This is how much keys are on a modern piano
     private int keyboardHeight = 100;
     private int blackKeyHeight = 65;
@@ -40,9 +43,11 @@ class Keyboard
     private Color blackKeyBackground;
     private Color blackKeyForeground;
 
+
     /** Constructors **/
-    Keyboard()
+    Keyboard(AppVisualiser parent)
     {
+        this.parent = parent;
         boardBackground = AppTheme.visualiser.boardBackground;
         whiteKeyBackground = AppTheme.visualiser.whiteKeyBackground;
         whiteKeyForeground = AppTheme.visualiser.whiteKeyForeground;
@@ -83,6 +88,20 @@ class Keyboard
         // A good height / width ratio
         keyboardHeight = (int) (whiteKeyWidth * 4.166666667);
         blackKeyHeight = (int) (whiteKeyWidth * 2.708333333);
+    }
+
+    public void changeKeyPressed(int keyValue, int velocity, boolean isPressed)
+    {
+        if (keyValue >= this.rootKeyValue && keyValue <= this.tailKeyValue)
+        {
+            keys[keyValue - 21].isPressed = isPressed;
+            keys[keyValue - 21].velocity = velocity;
+            parent.repaint();
+        }
+        else
+        {
+            // This is out of range!
+        }
     }
 
     /** Getters & Setters **/
@@ -128,7 +147,7 @@ public class AppVisualiser extends JPanel
         this.setBackground(AppTheme.visualiser.background);
         this.setOpaque(true);
         this.transform = new UITransform();
-        this.keyboard = new Keyboard();
+        this.keyboard = new Keyboard(this);
     }
 
     /** Overridden Methods **/

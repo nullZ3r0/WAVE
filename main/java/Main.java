@@ -21,8 +21,12 @@ public class Main
 
     public static void main(String[] args)
     {
-        System.out.println("Hello world!");
+        System.out.println("Starting WAVE!");
         setupWindowTheme();
+
+        // Midi testing
+        MidiConnector midiConnector = new MidiConnector();
+        midiConnector.printDevices();
 
         // Initialise custom render thread
         WaveGraphics customRenderer = new WaveGraphics();
@@ -34,7 +38,7 @@ public class Main
 
         // Initialise application window
         AppWindow mainWindow = new AppWindow();
-        mainWindow.setExtendedState(mainWindow.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+        //mainWindow.setExtendedState(mainWindow.getExtendedState() | JFrame.MAXIMIZED_BOTH);
         mainWindow.setFocusable(true);
 
         // DO NOT change this to be LOWER THAN 1000 x 600!
@@ -61,6 +65,19 @@ public class Main
 
         // Run WaveGraphics
         customRenderer.start();
+
+        // Setup some other stuff
+        MidiInputReceiver testReceiver = midiConnector.findReceiver("Wave MIDI Experiment");
+        if (testReceiver != null)
+        {
+            testReceiver.startListening();
+            midiConnector.printReceivers();
+            WaveAPI.connectReceiverToVisualiser(testReceiver, mainPanel.visualiser);
+        }
+        else
+        {
+            midiConnector.printReceivers();
+        }
 
         // Add keybindings
         mainWindow.addKeyListener(new KeyListener() {

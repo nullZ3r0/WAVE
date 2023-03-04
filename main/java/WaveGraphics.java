@@ -116,7 +116,7 @@ public class WaveGraphics extends Thread
     private static void drawBlackKey(AppVisualiser visualiser, Graphics2D graphics, Rectangle bounds, Keyboard.PianoKey pianoKey)
     {
         // Draw the black key
-        if (pianoKey.isPlaying)
+        if (pianoKey.isPlaying || pianoKey.isPressed)
         {
             graphics.setColor(AppTheme.visualiser.blackKeyPlaying);
         }
@@ -235,13 +235,13 @@ public class WaveGraphics extends Thread
                             graphics.fillRect(keyboardX + (a * whiteKeyWidth) + whiteKeyWidth - 1, 0, 2, height - keyboardHeight);
                     }
 
-                    if (!pianoKeys[i].isPlaying)
+                    if (pianoKeys[i].isPlaying || pianoKeys[i].isPressed)
                     {
-                        graphics.setColor(whiteKeyBackground);
+                        graphics.setColor(AppTheme.visualiser.whiteKeyPlaying);
                     }
                     else
                     {
-                        graphics.setColor(AppTheme.visualiser.whiteKeyPlaying);
+                        graphics.setColor(whiteKeyBackground);
                     }
                     graphics.fillRect(keyboardX + (a * whiteKeyWidth), height - keyboardHeight, whiteKeyWidth, keyboardHeight);
                     graphics.setColor(whiteKeyForeground);
