@@ -1,6 +1,7 @@
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 public class Main
 {
@@ -34,6 +35,9 @@ public class Main
         // Initialise application window
         AppWindow mainWindow = new AppWindow();
         mainWindow.setExtendedState(mainWindow.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+        mainWindow.setFocusable(true);
+
+        // DO NOT change this to be LOWER THAN 1000 x 600!
         mainWindow.setMinimumSize(new Dimension(1000, 600));
 
         // Initialise the main canvas
@@ -46,17 +50,39 @@ public class Main
         menuPanel menuPanel = new menuPanel();
 
         // Test manipulating exposed elements
-        //menuPanel.resumeButton.addActionListener(e -> WaveAPI.hideMenu(menuPanel));
-        menuPanel.resumeButton.addActionListener(e -> WaveAPI.nextCard(mainCanvas));
+        menuPanel.resumeButton.addActionListener(e -> WaveAPI.showCard(mainCanvas,"mainPanel"));
 
         // Initialise the mainPanel
         mainPanel mainPanel = new mainPanel();
 
         // Add the frames to the main AppCanvas
-        mainCanvas.add(menuPanel.self);
-        mainCanvas.add(mainPanel.self);
+        mainCanvas.add(menuPanel.self, "menuPanel");
+        mainCanvas.add(mainPanel.self, "mainPanel");
 
         // Run WaveGraphics
         customRenderer.start();
+
+        // Add keybindings
+        mainWindow.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e)
+            {
+                int keyCode = e.getKeyCode();
+                switch (keyCode)
+                {
+                    case KeyEvent.VK_ESCAPE -> WaveAPI.nextCard(mainCanvas);
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
     }
 }

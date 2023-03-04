@@ -1,7 +1,11 @@
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 public class WaveAPI
 {
+    KeyListener keyboardInput;
+
     public static void test(Container frame)
     {
         // The API has been written to accept a Container for the sake of compatibility with swing syntax [.getParent() -> Container]
@@ -21,15 +25,17 @@ public class WaveAPI
         }
     }
 
-    public static void hideMenu(menuPanel menuPanel)
+    public static void showCard(Container container, String name)
     {
-        System.out.println("API: This should hide the menuPanel");
-        Container parent = menuPanel.self.getParent();
-        if (parent != null)
+        System.out.println("Test API: showCard");
+
+        LayoutManager currentLayoutManager = container.getLayout();
+        if (currentLayoutManager.getClass() == CardLayout.class)
         {
-            parent.remove(menuPanel.self);
-            parent.revalidate();
-            parent.repaint();
+            CardLayout manager = (CardLayout) currentLayoutManager;
+            manager.show(container, name);
+            container.revalidate();
+            container.repaint();
         }
     }
 

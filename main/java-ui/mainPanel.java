@@ -24,13 +24,15 @@ public class mainPanel
         // Create visualiserContainer
         visualiserContainer = new AppFrame();
         visualiserContainer.setLayout(null);
-        visualiserContainer.setBackground(AppTheme.error);
+        visualiserContainer.setBackground(AppTheme.background);
         visualiserContainer.transform.setSize(0, -24, 1, 1);
         visualiserContainer.transform.setPosition(0, 0, 0, 0);
 
         // Create visualiser
         visualiser = new AppVisualiser();
-        visualiser.keyboard.setHeight(80);
+        visualiser.keyboard.useAutoDimensions(true);
+        visualiser.transform.setSize(0, 0, 1, 1);
+        visualiser.transform.setPosition(0, 0, 0, 0);
 
         // Set visualiser parent
         WaveGraphics.addChild(visualiserContainer, visualiser);

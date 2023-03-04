@@ -5,7 +5,7 @@ public class menuPanel
 {
     public AppFrame self;
 
-    // You can expose elements of the panel, this allows them to be accessed by other classes
+    // You can expose elements of the panel, this allows them to be accessed by other classes (most importantly main)
     // Example below
     public AppButton resumeButton;
 
@@ -65,13 +65,13 @@ public class menuPanel
         // Create divider
         AppFrame divider = new AppFrame();
         divider.setBackground(AppTheme.foreground);
-        divider.transform.setSize(4, 0, 0, 1);
+        divider.transform.setSize(2, 0, 0, 1);
         divider.transform.setCornerRadius(4);
 
-        // Add divider to the dividerFrame via WaveGraphics
+        // Set divider parent
         WaveGraphics.addChild(dividerContainer, divider);
 
-        // Add dividerContainer to the menuPanel vai WaveGraphics
+        // Set dividerContainer parent
         WaveGraphics.addChild(self, dividerContainer);
 
 
@@ -82,7 +82,7 @@ public class menuPanel
         rightContainer.transform.setCornerRadius(8);
         rightContainer.transform.setSize(600, -100, 0, 1);
 
-        // Add rightFrame to the menuFrame vai WaveGraphics
+        // Set rightContainer parent
         WaveGraphics.addChild(self, rightContainer);
     }
 }

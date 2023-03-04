@@ -10,7 +10,22 @@ class FrameTheme
     public Color backgroundHover;
     public Color backgroundPressed;
     public Color foreground;
-    public int cornerRadius = 0; // Needs to be implemented
+    public int cornerRadius = 0;
+}
+
+class VisualiserTheme
+{
+    public Color background;
+    public Color boardBackground;
+    public Color whiteKeyBackground;
+    public Color whiteKeyForeground;
+    public Color whiteKeyPlaying;
+    public Color blackKeyBackground;
+    public Color blackKeyForeground;
+    public Color blackKeyPlaying;
+    public Color keyPressed;
+
+    public Color octaveDivider;
 }
 class ButtonTheme
 {
@@ -27,6 +42,7 @@ public class AppTheme
 {
     public static String name = "none";
     public static Color error = new Color(220,28, 227);
+    public static Color white;
     public static Color window;
     public static Color backgroundLight3;
     public static Color backgroundLight2;
@@ -36,6 +52,7 @@ public class AppTheme
     public static Color backgroundDark2;
     public static Color backgroundDark3;
 
+    // Bugs occur when a container with children is set to have a transparent background
     public static Color transparent = new Color(255, 255, 255, 0);
     public static Color foreground;
     public static Font titleFont;
@@ -45,6 +62,8 @@ public class AppTheme
 
     public static ButtonTheme button;
     public static FrameTheme frame;
+
+    public static VisualiserTheme visualiser;
 
     public static Color getCustomColor(String colorName)
     {
@@ -69,7 +88,7 @@ public class AppTheme
         backgroundDark2  = new Color(24, 25, 33);
         backgroundDark3  = new Color(13, 14, 18);
 
-        Color white = new Color(255, 255, 255);
+        white = new Color(255, 255, 255);
         Color white25 = new Color(255, 255, 255,192);
         Color white50 = new Color(255, 255, 255,128);
 
@@ -91,6 +110,18 @@ public class AppTheme
         frame.backgroundHover = background;
         frame.backgroundPressed = background;
         frame.foreground = foreground;
+
+        visualiser = new VisualiserTheme();
+        visualiser.background = background;
+        visualiser.boardBackground = backgroundDark3;
+        visualiser.whiteKeyBackground = white;
+        visualiser.whiteKeyForeground = backgroundDark2;
+        visualiser.whiteKeyPlaying = new Color(140, 109, 177);
+        visualiser.blackKeyBackground = backgroundDark3;
+        visualiser.blackKeyForeground = white;
+        visualiser.blackKeyPlaying = new Color(48, 38, 61);
+        visualiser.keyPressed = new Color(236, 151, 62);
+        visualiser.octaveDivider = backgroundDark2;
 
         // Example of setting a custom colour with its own name
         customColours.put("uniqueSpecial", uniqueBackground);
