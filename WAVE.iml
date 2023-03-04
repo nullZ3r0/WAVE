@@ -6,8 +6,11 @@
       <sourceFolder url="file://$MODULE_DIR$/main/assets" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/main/java-ui" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/main/themes" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/main/midi-connector" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/main/ui-framework" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/main/ui-panels" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/main/ui-themes" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/main/window-themes" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
