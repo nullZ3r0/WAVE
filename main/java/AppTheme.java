@@ -24,7 +24,7 @@ class VisualiserTheme
     public Color blackKeyForeground;
     public Color blackKeyPlaying;
     public Color keyPressed;
-
+    public Color octaveDividerLight1;
     public Color octaveDivider;
 }
 class ButtonTheme
@@ -121,7 +121,8 @@ public class AppTheme
         visualiser.blackKeyForeground = white;
         visualiser.blackKeyPlaying = new Color(48, 38, 61);
         visualiser.keyPressed = new Color(236, 151, 62);
-        visualiser.octaveDivider = backgroundDark2;
+        visualiser.octaveDividerLight1 = backgroundDark1;
+        visualiser.octaveDivider = backgroundDark3;
 
         // Example of setting a custom colour with its own name
         customColours.put("uniqueSpecial", uniqueBackground);

@@ -221,6 +221,20 @@ public class WaveGraphics extends Thread
             {
                 if (pianoKeys[i].isWhite)
                 {
+                    int keyPosition = (i + 1) % 12;
+                    switch(keyPosition)
+                    {
+                        case 3:
+                            // Create a octave dividers
+                            graphics.setColor(AppTheme.visualiser.octaveDivider);
+                            graphics.fillRect(keyboardX + (a * whiteKeyWidth) + whiteKeyWidth - 1, 0, 2, height - keyboardHeight);
+                            break;
+                        case 8:
+                            // Create a light dividers
+                            graphics.setColor(AppTheme.visualiser.octaveDividerLight1);
+                            graphics.fillRect(keyboardX + (a * whiteKeyWidth) + whiteKeyWidth - 1, 0, 2, height - keyboardHeight);
+                    }
+
                     if (!pianoKeys[i].isPlaying)
                     {
                         graphics.setColor(whiteKeyBackground);
@@ -259,10 +273,6 @@ public class WaveGraphics extends Thread
                         case 7:
                             blackKeyBounds.translate(whiteKeyWidth * 2, 0);
                             break;
-                        case 5:
-                            // Create a divider for the octave
-                            graphics.setColor(AppTheme.visualiser.octaveDivider);
-                            graphics.fillRect(blackKeyBounds.x - 1 + (blackKeyWidth / 2), 0, 2, height - keyboardHeight);
                         default:
                             blackKeyBounds.translate(whiteKeyWidth, 0);
                     }
