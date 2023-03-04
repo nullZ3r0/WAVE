@@ -9,11 +9,15 @@ import java.io.IOException;
 
 public class AppButton extends JButton implements MouseListener
 {
+    public UITransform transform;
+    private Component parent;
+    private Boolean useTransform = false;
+    private Boolean useWaveGraphics = false;
+
     public Color background;
     public Color backgroundHover;
     public Color backgroundPressed;
     public Color foreground;
-    private int cornerRadius = 0;
     private boolean mouseIn = false;
     private boolean pressed = false;
     private void init()
@@ -21,10 +25,11 @@ public class AppButton extends JButton implements MouseListener
         background = AppTheme.button.background;
         backgroundHover = AppTheme.button.backgroundHover;
         backgroundPressed = AppTheme.button.backgroundPressed;
-        cornerRadius = AppTheme.button.cornerRadius;
+        transform = new UITransform();
+        transform.setCornerRadius(AppTheme.button.cornerRadius);
 
         addMouseListener(this);
-        this.setSize(400, 34);
+        this.setSize(300, 34);
         this.setPreferredSize(this.getSize());
         this.setBackground(background);
 
@@ -35,6 +40,8 @@ public class AppButton extends JButton implements MouseListener
 
         // Initialise custom fonts
         this.setFont(AppTheme.button.font.deriveFont(Font.PLAIN, 16));
+        this.setHorizontalAlignment(SwingConstants.LEFT);
+
     }
 
     // Constructors
@@ -44,30 +51,29 @@ public class AppButton extends JButton implements MouseListener
         init();
     }
 
-    // Custom button render
-    @Override
-    protected void paintComponent(Graphics g)
-    {
-        int width = getWidth();
-        int height = getHeight();
-        Dimension arcs = new Dimension(Math.min(cornerRadius, height), Math.min(cornerRadius, height));
-        Graphics2D graphics = (Graphics2D) g;
-        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        // Draws the rounded panel with borders.
-        graphics.setColor(this.getBackground());
-        graphics.fillRoundRect(0, 0, width-1, height-1, arcs.width, arcs.height); //paint background
-        //graphics.setColor(getForeground());
-        //graphics.drawRoundRect(0, 0, width-1, height-1, arcs.width, arcs.height); //paint border
-
-        // Draw the button text, image etc
-        super.paintComponent(g);
-    }
-
     public AppButton(String _setText)
     {
         this.setText(_setText);
         init();
+    }
+
+    // Custom button render
+    @Override
+    protected void paintComponent(Graphics g)
+    {
+        if (useWaveGraphics == true)
+        {
+            // Render using WaveGraphics
+            WaveGraphics.draw(this, g);
+
+            // Draw the button text, image etc
+            super.paintComponent(g);
+        }
+        else
+        {
+            // Render using Java Swing
+            super.paintComponent(g);
+        }
     }
 
     public void mouseClicked(MouseEvent e)
@@ -114,8 +120,8 @@ public class AppButton extends JButton implements MouseListener
         pressed = false;
     }
 
-    public void setCornerRadius(int _cornerRadius)
-    {
-        cornerRadius = _cornerRadius;
-    }
+    public void useTransform(Boolean set) {useTransform = set;}
+    public Boolean useTransform() {return useTransform;}
+    public void useWaveGraphics(Boolean set) {useWaveGraphics = set;}
+    public boolean mouseIn() {return mouseIn;}
 }

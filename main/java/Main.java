@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 public class Main
 {
@@ -22,53 +24,65 @@ public class Main
         System.out.println("Hello world!");
         setupWindowTheme();
 
+        // Initialise custom render thread
+        WaveGraphics customRenderer = new WaveGraphics();
+        customRenderer.setDaemon(true);
+
+        // Naming hierarchy and Class hierarchy
+        // appWindow (AppWindow) -> appCanvas (AppCanvas) -> appPanel (AppFrame) -> appContainers (AppFrame) -> appFrames (AppFrame) / appButtons (AppButton)
+        // AppWindow -> AppCanvas -> AppFrame -> AppButton
+
         // Initialise application window
         AppWindow mainWindow = new AppWindow();
+        mainWindow.setExtendedState(mainWindow.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+        mainWindow.setFocusable(true);
 
-        // Initialise the main container
-        AppContainer mainContainer = new AppContainer();
+        // DO NOT change this to be LOWER THAN 1000 x 600!
+        mainWindow.setMinimumSize(new Dimension(1000, 600));
 
-        // Add the main container to the application window
-        mainWindow.add(mainContainer);
+        // Initialise the main canvas
+        AppCanvas mainCanvas = new AppCanvas();
 
-        // Example: switching between two different frames and changing the background colour of one
-        // Initialise the first frame
-        AppFrame frame1 = new AppFrame();
-        frame1.setLayout(new FlowLayout(FlowLayout.CENTER, 12, 12));
+        // Add the main canvas to the application window
+        mainWindow.add(mainCanvas);
 
-        // Initialise buttons to add
-        AppButton button1 = new AppButton("Switch to frame2");
+        // Initialise the menuPanel
+        menuPanel menuPanel = new menuPanel();
 
-        // We will call an API method called nextCard, passing it an AppContainer directly
-        button1.addActionListener(e -> WaveAPI.nextCard(mainContainer));
+        // Test manipulating exposed elements
+        menuPanel.resumeButton.addActionListener(e -> WaveAPI.showCard(mainCanvas,"mainPanel"));
 
-        // Add the button to the first frame
-        frame1.add(button1);
+        // Initialise the mainPanel
+        mainPanel mainPanel = new mainPanel();
 
-        // Initialise the second frame
-        AppFrame frame2 = new AppFrame();
-        frame2.setLayout(new FlowLayout(FlowLayout.CENTER, 12, 12));
+        // Add the frames to the main AppCanvas
+        mainCanvas.add(menuPanel.self, "menuPanel");
+        mainCanvas.add(mainPanel.self, "mainPanel");
 
-        // This custom colour doesn't exist in the standard theme, let's see what happens
-        frame2.setBackground(AppTheme.getCustomColor("uniqueSpecial2"));
+        // Run WaveGraphics
+        customRenderer.start();
 
-        // Initialise first button to add
-        AppButton button2 = new AppButton("Switch to frame1");
+        // Add keybindings
+        mainWindow.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
 
-        // We will call an API method called nextCard, passing it a Container (Usually an AppContainer) indirectly (for learning purposes)
-        // Why does getParent need to be called twice?
-        button2.addActionListener(e -> WaveAPI.nextCard(button2.getParent().getParent()));
+            }
 
-        // We will call an API method called test, passing it a Container (Usually an AppFrame)
-        AppButton button3 = new AppButton("Change background colour");
-        button3.addActionListener(e -> WaveAPI.test(frame2));
+            @Override
+            public void keyPressed(KeyEvent e)
+            {
+                int keyCode = e.getKeyCode();
+                switch (keyCode)
+                {
+                    case KeyEvent.VK_ESCAPE -> WaveAPI.nextCard(mainCanvas);
+                }
+            }
 
-        // Add the buttons to the second frame
-        frame2.add(button2);
-        frame2.add(button3);
+            @Override
+            public void keyReleased(KeyEvent e) {
 
-        // Add the frames to the main AppContainer
-        mainContainer.add(frame1);
-        mainContainer.add(frame2);
+            }
+        });
     }
 }

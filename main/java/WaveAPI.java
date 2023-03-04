@@ -1,24 +1,31 @@
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 public class WaveAPI
 {
-    public static void test(Container frame)
+    public static void showCard(Container container, String name)
     {
-        // The API has been written to accept a Container for the sake of compatibility with swing syntax [.getParent() -> Container]
-        // If we want to perform actions that are only compatible with our own swing extended classes, just do a class check
-        // Example: frame.getClass() == AppFrame.class
-        System.out.println("Test API: test");
+        System.out.println("Test API: showCard");
 
-        // We will change the colour of an AppFrame
-        Color currentColor = frame.getBackground();
-        if (currentColor.equals(AppTheme.getCustomColor("uniqueSpecial")))
+        LayoutManager currentLayoutManager = container.getLayout();
+        if (currentLayoutManager.getClass() == CardLayout.class)
         {
-            frame.setBackground(new Color(116, 65, 204));
+            CardLayout manager = (CardLayout) currentLayoutManager;
+            manager.show(container, name);
+            container.revalidate();
+            container.repaint();
         }
-        else
-        {
-            frame.setBackground(AppTheme.getCustomColor("uniqueSpecial"));
-        }
+    }
+
+    public static void switchToCredits()
+    {
+        System.out.println("Test API: This show the creditsContainer on the menuPanel -> rightContainer");
+    }
+
+    public static void debugButton()
+    {
+        System.out.println("This button has been pressed");
     }
 
     public static void nextCard(Container container)
@@ -30,7 +37,6 @@ public class WaveAPI
         {
             CardLayout manager = (CardLayout) currentLayoutManager;
             manager.next(container);
-
             container.revalidate();
             container.repaint();
         }
