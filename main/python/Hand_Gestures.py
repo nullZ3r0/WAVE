@@ -4,7 +4,8 @@
 # # # # # # # # # #
 
 # Imports
-
+import cv2
+import mediapipe
 
 # Variables
 

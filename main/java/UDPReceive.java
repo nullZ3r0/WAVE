@@ -20,7 +20,20 @@ public class UDPReceive // Receieves messages
                 String msg = new String(buffer, 0, packet.getLength());      // Receieves the message sent
                 System.out.println(packet.getAddress().getHostName() + ": " + msg);  // Prints out the message sent
                 packet.setLength(buffer.length);
+
+                if(msg.contains("AppID V:")==true)
+                {
+                    String AppID = msg.substring(8, msg.length());
+                    System.out.println(Integer.parseInt(AppID));
+                };
+
+                if(msg.contains("Voice:")==true)
+                {
+                    String VoiceToText = msg.substring(6, msg.length());
+                    System.out.println(VoiceToText);
+                };
             }
+
         } 
         catch (Exception e) 
         {
