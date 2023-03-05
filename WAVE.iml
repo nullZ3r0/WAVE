@@ -11,6 +11,7 @@
       <sourceFolder url="file://$MODULE_DIR$/main/ui-panels" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/main/ui-themes" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/main/window-themes" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/main/midi-playback" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

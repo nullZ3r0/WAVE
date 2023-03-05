@@ -46,7 +46,7 @@ public class StandardTheme implements UITheme
         AppTheme.visualiser.whiteKeyPlaying = new Color(140, 109, 177);
         AppTheme.visualiser.blackKeyBackground = AppTheme.backgroundDark3;
         AppTheme.visualiser.blackKeyForeground = AppTheme.white;
-        AppTheme.visualiser.blackKeyPlaying = new Color(48, 38, 61);
+        AppTheme.visualiser.blackKeyPlaying = new Color(81, 65, 103);
         AppTheme.visualiser.keyPressed = new Color(236, 151, 62);
         AppTheme.visualiser.octaveDividerLight1 = AppTheme.backgroundDark1;
         AppTheme.visualiser.octaveDivider = AppTheme.backgroundDark3;

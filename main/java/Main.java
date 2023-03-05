@@ -79,6 +79,9 @@ public class Main
             midiConnector.printReceivers();
         }
 
+        MidiPlayer midiPlayer = new MidiPlayer();
+        midiPlayer.run();
+
         // Add keybindings
         mainWindow.addKeyListener(new KeyListener() {
             @Override

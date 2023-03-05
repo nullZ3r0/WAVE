@@ -7,6 +7,11 @@ public class WaveAPI
         receiver.setVisualiser(visualiser);
     }
 
+    public static void pressPianoKey(int keyValue, int velocity, boolean isPressed)
+    {
+
+    }
+
     public static void showCard(Container container, String name)
     {
         System.out.println("Test API: showCard");
