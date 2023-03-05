@@ -79,6 +79,8 @@ public class Main
         }
 
         MidiPlayer midiPlayer = new MidiPlayer();
-        midiPlayer.run();
+        midiPlayer.playNote(69, 128);
+        midiPlayer.playNote(72, 128);
+        midiPlayer.playNote(76, 128);
     }
 }
