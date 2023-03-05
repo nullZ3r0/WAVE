@@ -39,7 +39,6 @@ public class Main
         // Initialise application window
         AppWindow mainWindow = new AppWindow();
         //mainWindow.setExtendedState(mainWindow.getExtendedState() | JFrame.MAXIMIZED_BOTH);
-        mainWindow.setFocusable(true);
 
         // DO NOT change this to be LOWER THAN 1000 x 600!
         mainWindow.setMinimumSize(new Dimension(1000, 600));
@@ -81,28 +80,5 @@ public class Main
 
         MidiPlayer midiPlayer = new MidiPlayer();
         midiPlayer.run();
-
-        // Add keybindings
-        mainWindow.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e)
-            {
-                int keyCode = e.getKeyCode();
-                switch (keyCode)
-                {
-                    case KeyEvent.VK_ESCAPE -> WaveAPI.nextCard(mainCanvas);
-                }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-
-            }
-        });
     }
 }
