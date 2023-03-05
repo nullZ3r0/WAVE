@@ -2,12 +2,14 @@ import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
+import java.util.Observable;
 
-public class MidiInputReceiver implements Receiver
+public class MidiInputReceiver extends Observable implements Receiver
 {
     public String name;
     public MidiDevice device;
     private AppVisualiser visualiser;
+    private Wave wave;
     private boolean isListening;
     public MidiInputReceiver(String name, MidiDevice device)
     {
