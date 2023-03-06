@@ -176,7 +176,9 @@ def calc_bounding_rect(image, landmarks):
 
     return [x, y, x + w, y + h]
 
-
+# Lukas
+# Name - calc_landmark_list()
+# Description - Calculates the relative coordinates of the landmarks from 1 landmark (i think)
 def calc_landmark_list(image, landmarks):
     image_width, image_height = image.shape[1], image.shape[0]
 
@@ -192,7 +194,9 @@ def calc_landmark_list(image, landmarks):
 
     return landmark_point
 
-
+# Lukas
+# Name - pre_process_landmark()
+# Description - No idea what it does
 def pre_process_landmark(landmark_list):
     temp_landmark_list = copy.deepcopy(landmark_list)
 
