@@ -26,6 +26,8 @@ class VisualiserTheme
     public Color keyPressed;
     public Color octaveDividerLight1;
     public Color octaveDivider;
+    public Color whiteNoteBackground;
+    public Color blackNoteBackground;
 }
 class ButtonTheme
 {
@@ -36,11 +38,6 @@ class ButtonTheme
     public Color foregroundHover;
     public Font font;
     public int cornerRadius = 0;
-}
-
-interface UITheme
-{
-    static void apply() {};
 }
 
 public class AppTheme

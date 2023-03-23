@@ -66,21 +66,25 @@ public class Main
         customRenderer.start();
 
         // Setup some other stuff
+        MidiPlayer midiPlayer = new MidiPlayer();
+
         MidiInputReceiver testReceiver = midiConnector.findReceiver("Wave MIDI Experiment");
         if (testReceiver != null)
         {
             testReceiver.startListening();
             midiConnector.printReceivers();
-            WaveAPI.connectReceiverToVisualiser(testReceiver, mainPanel.visualiser);
+            Wave.setVisualiser(mainPanel.visualiser);
+            Wave.setMidiPlayer(midiPlayer);
+            Wave.setMidiInputReceiver(testReceiver);
         }
         else
         {
             midiConnector.printReceivers();
         }
 
-        MidiPlayer midiPlayer = new MidiPlayer();
-        midiPlayer.playNote(69, 128);
-        midiPlayer.playNote(72, 128);
-        midiPlayer.playNote(76, 128);
+        Wave.setMidiSequence("main/assets/midi-library/pattern 6.mid");
+        Wave.loadMidiSequence();
+        Wave.loadNoteActions();
+        Wave.playMidiSequence();
     }
 }

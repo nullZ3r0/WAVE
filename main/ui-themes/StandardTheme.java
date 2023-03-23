@@ -2,7 +2,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
-public class StandardTheme implements UITheme
+public class StandardTheme
 {
     public static void apply()
     {
@@ -50,6 +50,8 @@ public class StandardTheme implements UITheme
         AppTheme.visualiser.keyPressed = new Color(236, 151, 62);
         AppTheme.visualiser.octaveDividerLight1 = AppTheme.backgroundDark1;
         AppTheme.visualiser.octaveDivider = AppTheme.backgroundDark3;
+        AppTheme.visualiser.whiteNoteBackground = new Color(236, 151, 62);
+        AppTheme.visualiser.blackNoteBackground = new Color(171, 109, 44);
 
         // Initialise custom fonts
         try

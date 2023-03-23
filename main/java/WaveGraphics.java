@@ -1,8 +1,9 @@
-import org.w3c.dom.css.Rect;
-
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class WaveGraphics extends Thread
 {
@@ -113,24 +114,106 @@ public class WaveGraphics extends Thread
         }
     }
 
-    private static void drawBlackKey(AppVisualiser visualiser, Graphics2D graphics, Rectangle bounds, Keyboard.PianoKey pianoKey)
+    private static void drawPianoKey(Graphics2D graphics, Rectangle bounds, PianoAction pianoAction)
     {
-        // Draw the black key
-        if (pianoKey.isPlaying || pianoKey.isPressed)
+        if (pianoAction.isWhite)
         {
-            graphics.setColor(AppTheme.visualiser.blackKeyPlaying);
+            if (pianoAction.isPressed)
+            {
+                graphics.setColor(AppTheme.visualiser.whiteKeyPlaying);
+            }
+            else
+            {
+                graphics.setColor(AppTheme.visualiser.whiteKeyBackground);
+            }
+
+            graphics.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+            graphics.setColor(AppTheme.visualiser.whiteKeyForeground);
+            graphics.drawRect(bounds.x, bounds.y + 1, bounds.width - 1, bounds.height - 2);
         }
         else
         {
-            graphics.setColor(AppTheme.visualiser.blackKeyBackground);
+            // Draw the black key
+            if (pianoAction.isPressed)
+            {
+                graphics.setColor(AppTheme.visualiser.blackKeyPlaying);
+            }
+            else
+            {
+                graphics.setColor(AppTheme.visualiser.blackKeyBackground);
+            }
+            graphics.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+
+            // Draw a gradient on the black key for style and improved visibility
+            graphics.setStroke(new BasicStroke(1));
+            GradientPaint gradient = new GradientPaint(bounds.x, bounds.y, AppTheme.visualiser.blackKeyForeground, bounds.x + bounds.width, bounds.y + bounds.height, AppTheme.transparent);
+            graphics.setPaint(gradient);
+            graphics.drawRect(bounds.x + 2, bounds.y + 2, bounds.width - 5, bounds.height - 5);
+        }
+    }
+
+    private static void drawNote(Graphics2D graphics, Rectangle bounds, PianoAction pianoAction)
+    {
+        if (pianoAction.isWhite)
+        {
+            graphics.setColor(AppTheme.visualiser.whiteNoteBackground);
+        }
+        else
+        {
+            graphics.setColor(AppTheme.visualiser.blackNoteBackground);
         }
         graphics.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+        graphics.setColor(new Color(255,255,255,192));
+        graphics.fillRect(bounds.x, bounds.y, bounds.width, -4);
+        graphics.setColor(new Color(0,0,0,192));
+        graphics.fillRect(bounds.x, bounds.y + bounds.height, bounds.width, 4);
+    }
 
-        // Draw a gradient on the black key for style and improved visibility
-        graphics.setStroke(new BasicStroke(1));
-        GradientPaint gradient = new GradientPaint(bounds.x, bounds.y, AppTheme.visualiser.blackKeyForeground, bounds.x + bounds.width, bounds.y + bounds.height, AppTheme.transparent);
-        graphics.setPaint(gradient);
-        graphics.drawRect(bounds.x + 2, bounds.y + 2, bounds.width - 5, bounds.height - 5);
+    public static int mapMidiValue(PianoAction pianoAction, int rootKey, int whiteKeyWidth, int blackKeyWidth)
+    {
+        // Calculate the distance of the next key relative to C0
+        // 0 1 2 3 4 5 6 7 8 9 10 11
+        // W B W B W W B W B W B  W
+        int[] positionIndex = new int[12];
+        // White notes
+        positionIndex[0] = 0;
+        positionIndex[2] = whiteKeyWidth;
+        positionIndex[4] = whiteKeyWidth * 2;
+        positionIndex[5] = whiteKeyWidth * 3;
+        positionIndex[7] = whiteKeyWidth * 4;
+        positionIndex[9] = whiteKeyWidth * 5;
+        positionIndex[11] = whiteKeyWidth * 6;
+
+        // Black notes
+        positionIndex[1] = whiteKeyWidth - (int) (blackKeyWidth * 0.666);
+        positionIndex[3] = whiteKeyWidth + positionIndex[2] - (int) (blackKeyWidth * 0.333);
+        positionIndex[6] = whiteKeyWidth + positionIndex[5] - (int) (blackKeyWidth * 0.666);
+        positionIndex[8] = whiteKeyWidth + positionIndex[7] - (blackKeyWidth / 2);
+        positionIndex[10] = whiteKeyWidth + positionIndex[9] - (int) (blackKeyWidth * 0.333);
+
+        int midiValue = pianoAction.midiValue;
+
+        int x = 0;
+        int baseOctave = (12 * (int) (Math.floor(Math.abs(midiValue/12)))) / 12;
+        int relativeOctave = (12 * (int) (Math.floor(Math.abs(rootKey/12)))) / 12;
+        int octave = baseOctave - relativeOctave;
+        int octaveWidth = whiteKeyWidth * 7;
+        int octaveOffset = octaveWidth - positionIndex[rootKey % 12];
+        int octaveFirst = octave == 0 ? -positionIndex[rootKey % 12] : 0;
+
+        if (octave == 0)
+        {
+            // This is the first octave
+            x = 0;
+        }
+        else
+        {
+            x = octaveOffset;
+            x += (octave - 1) * octaveWidth;
+        }
+
+        int keyPosition = midiValue % 12;
+        return x + octaveFirst + positionIndex[keyPosition];
     }
 
     public static void draw(Component object, Graphics g)
@@ -196,6 +279,8 @@ public class WaveGraphics extends Thread
             // Get position info
             int keyboardY = height - keyboardHeight;
             int keyboardX = visualiser.keyboard.getBufferWidth();
+            int playbackHeight = height - keyboardHeight;
+            long playheadTick = visualiser.keyboard.playheadTick;
 
             // Get keyboard colour info
             Color boardBackground = AppTheme.visualiser.boardBackground;
@@ -203,7 +288,14 @@ public class WaveGraphics extends Thread
             Color whiteKeyForeground = AppTheme.visualiser.whiteKeyForeground;
 
             // Get key info
-            Keyboard.PianoKey[] pianoKeys = visualiser.keyboard.getKeys();
+            PianoAction[] pianoActions = visualiser.keyboard.getKeys();
+
+            // Get note info
+            ArrayList<PianoAction> noteActions = visualiser.keyboard.getNoteActions();
+
+            // Get keyboard info
+            int rootKey = visualiser.keyboard.rootKeyValue;
+            int tailKey = visualiser.keyboard.tailKeyValue;
 
             // Draws the background for the MIDI notes to be placed on (can have rounded corners)
             graphics.setColor(visualiser.getBackground());
@@ -213,13 +305,48 @@ public class WaveGraphics extends Thread
             graphics.setColor(boardBackground);
             graphics.fillRoundRect(0, keyboardY, width, keyboardHeight, arcs.width, arcs.height);
 
+
+            // Draws the raining notes
+            Rectangle whiteNoteBounds = new Rectangle(0, 0, whiteKeyWidth - 4, -50);
+            Rectangle blackNoteBounds = new Rectangle(0, 0, blackKeyWidth - 4, -50);
+
+            for (PianoAction noteAction : noteActions)
+            {
+                long currentPosition = noteAction.tickStart - playheadTick;
+
+                // Only draw notes that are in the keyboard's range and the playback's range
+                if (noteAction.midiValue >= rootKey && noteAction.midiValue <= tailKey && currentPosition <= 1000 && currentPosition + noteAction.tickDuration >= 0)
+                {
+                    // Draw white notes first
+                    double calcY = playbackHeight * (1.0 - currentPosition / 1000.0);
+                    double heightY = playbackHeight * (noteAction.tickDuration / 1000.0);
+
+                    if (noteAction.isWhite)
+                    {
+                        whiteNoteBounds.y = (int) Math.round(calcY);
+                        whiteNoteBounds.height = -(int) Math.round(heightY);
+                        whiteNoteBounds.x = 2 + keyboardX + mapMidiValue(noteAction, rootKey, whiteKeyWidth, blackKeyWidth);
+                        drawNote(graphics, whiteNoteBounds, noteAction);
+
+                    }
+                    else
+                    {
+                        blackNoteBounds.y = (int) Math.round(calcY);
+                        blackNoteBounds.height = -(int) Math.round(heightY);
+                        blackNoteBounds.x = 2 + keyboardX + mapMidiValue(noteAction, rootKey, whiteKeyWidth, blackKeyWidth);
+                        drawNote(graphics, blackNoteBounds, noteAction);
+                    }
+                }
+            }
+
             // Draws the white keys
             // Starting from A0
             int a = 0;
+            Rectangle whiteKeyBounds = new Rectangle(0, height - keyboardHeight, whiteKeyWidth, keyboardHeight);
             graphics.setStroke(new BasicStroke(2));
-            for (int i = 0; i < pianoKeys.length; i++)
+            for (int i = 0; i < pianoActions.length; i++)
             {
-                if (pianoKeys[i].isWhite)
+                if (pianoActions[i].isWhite)
                 {
                     int keyPosition = (i + 1) % 12;
                     switch(keyPosition)
@@ -235,17 +362,9 @@ public class WaveGraphics extends Thread
                             graphics.fillRect(keyboardX + (a * whiteKeyWidth) + whiteKeyWidth - 1, 0, 2, height - keyboardHeight);
                     }
 
-                    if (pianoKeys[i].isPlaying || pianoKeys[i].isPressed)
-                    {
-                        graphics.setColor(AppTheme.visualiser.whiteKeyPlaying);
-                    }
-                    else
-                    {
-                        graphics.setColor(whiteKeyBackground);
-                    }
-                    graphics.fillRect(keyboardX + (a * whiteKeyWidth), height - keyboardHeight, whiteKeyWidth, keyboardHeight);
-                    graphics.setColor(whiteKeyForeground);
-                    graphics.drawRect(keyboardX + (a * whiteKeyWidth), height + 1 - keyboardHeight, whiteKeyWidth - 1, keyboardHeight - 2);
+                    int testX = mapMidiValue(pianoActions[i], rootKey, whiteKeyWidth, blackKeyWidth);
+                    whiteKeyBounds.x = keyboardX + testX;
+                    drawPianoKey(graphics, whiteKeyBounds, pianoActions[i]);
                     a++;
                 }
             }
@@ -254,31 +373,15 @@ public class WaveGraphics extends Thread
             // Create default bounds
             Rectangle blackKeyBounds = new Rectangle(keyboardX + whiteKeyWidth - (blackKeyWidth / 2), keyboardY + 2, blackKeyWidth, blackKeyHeight);
 
-            for (int i = 0; i < pianoKeys.length; i++)
+            for (PianoAction pianoAction : pianoActions)
             {
-                if (pianoKeys[i].isWhite == false)
+                if (pianoAction.isWhite == false)
                 {
-                    drawBlackKey(visualiser, graphics, blackKeyBounds, pianoKeys[i]);
-
-                    // Calculate the distance of the next key
-                    // Octave starting at A0 key colours
-                    // 1 2 3 4 5 6 7 8 9 10 11 12
-                    // W B W W B W B W W B  W  B
-
-                    int keyPosition = (i + 1) % 12;
-                    switch(keyPosition)
-                    {
-                        case 2:
-                        case 3:
-                        case 7:
-                            blackKeyBounds.translate(whiteKeyWidth * 2, 0);
-                            break;
-                        default:
-                            blackKeyBounds.translate(whiteKeyWidth, 0);
-                    }
+                    int testX = mapMidiValue(pianoAction, rootKey, whiteKeyWidth, blackKeyWidth);
+                    blackKeyBounds.x = keyboardX + testX;
+                    drawPianoKey(graphics, blackKeyBounds, pianoAction);
                 }
             }
-
         }
     }
 
