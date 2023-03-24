@@ -46,7 +46,7 @@ public class menuPanel
         WaveGraphics.addChild(leftContainer, button2);
 
         // Initialise dummy buttons
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 9; i++)
         {
             AppButton dummyButton = new AppButton("Button " + String.valueOf(i + 1));
             dummyButton.transform.setSize(-48, 32, 1, 0);

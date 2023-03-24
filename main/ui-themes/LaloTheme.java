@@ -54,7 +54,7 @@ public class LaloTheme extends UITheme
         AppTheme.visualiser = new VisualiserTheme();
         AppTheme.visualiser.background = AppTheme.background;
         AppTheme.visualiser.backgroundLight50 = AppTheme.fadeColor(AppTheme.black, 0.5);
-        AppTheme.visualiser.foreground = AppTheme.white;
+        AppTheme.visualiser.foreground = AppTheme.black;
         AppTheme.visualiser.foregroundLight50 = AppTheme.fadeColor(AppTheme.visualiser.foreground, 0.5);
         AppTheme.visualiser.boardBackground = AppTheme.window; //AppTheme.mixColor(AppTheme.backgroundDark3,mixer, 0.75);
         AppTheme.visualiser.whiteKeyBackground = AppTheme.white;
@@ -65,8 +65,12 @@ public class LaloTheme extends UITheme
         AppTheme.visualiser.blackKeyPlaying = AppTheme.darkenColor(AppTheme.visualiser.whiteKeyPlaying, 0.5);
         AppTheme.visualiser.octaveDividerLight1 = AppTheme.backgroundDark1;
         AppTheme.visualiser.octaveDivider = AppTheme.backgroundDark3;
+        AppTheme.visualiser.keyPlaying = new Color(109, 32, 32);
         AppTheme.visualiser.whiteNoteBackground = new Color(106, 124, 203);
         AppTheme.visualiser.blackNoteBackground = AppTheme.darkenColor(AppTheme.visualiser.whiteNoteBackground, 0.5);
+        AppTheme.visualiser.whiteNoteForeground = AppTheme.darkenColor(AppTheme.visualiser.whiteNoteBackground, 0.333);
+        AppTheme.visualiser.blackNoteForeground = AppTheme.darkenColor(AppTheme.visualiser.whiteNoteForeground, 0.666);
+
         AppTheme.visualiser.whiteKeyPressedCorrect = new Color(89, 180, 118);
         AppTheme.visualiser.blackKeyPressedCorrect = AppTheme.darkenColor(AppTheme.visualiser.whiteKeyPressedCorrect, 0.5);
 

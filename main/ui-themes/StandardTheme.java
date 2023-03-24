@@ -53,8 +53,10 @@ public class StandardTheme extends UITheme
         AppTheme.visualiser.octaveDividerLight1 = AppTheme.backgroundDark1;
         AppTheme.visualiser.octaveDivider = AppTheme.backgroundDark3;
         AppTheme.visualiser.keyPlaying = new Color(236, 151, 62);
-        AppTheme.visualiser.whiteNoteBackground = new Color(162, 130, 215);
+        AppTheme.visualiser.whiteNoteBackground = new Color(168, 138, 217);
+        AppTheme.visualiser.whiteNoteForeground = AppTheme.darkenColor(AppTheme.visualiser.whiteNoteBackground, 0.333);
         AppTheme.visualiser.blackNoteBackground = AppTheme.darkenColor(AppTheme.visualiser.whiteNoteBackground, 0.666);
+        AppTheme.visualiser.blackNoteForeground = AppTheme.darkenColor(AppTheme.visualiser.whiteNoteForeground, 0.666);
 
         //AppTheme.visualiser.whiteKeyPlaying = new Color(69, 126, 217);
 

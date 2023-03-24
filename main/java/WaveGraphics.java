@@ -197,13 +197,10 @@ public class WaveGraphics extends Thread
 
     private static void drawNote(Graphics2D graphics, Rectangle bounds, PianoAction pianoAction)
     {
+        graphics.setColor(AppTheme.visualiser.blackNoteBackground);
         if (pianoAction.isWhite)
         {
             graphics.setColor(AppTheme.visualiser.whiteNoteBackground);
-        }
-        else
-        {
-            graphics.setColor(AppTheme.visualiser.blackNoteBackground);
         }
 
         //graphics.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
@@ -215,7 +212,11 @@ public class WaveGraphics extends Thread
         // Front dot
         if (-bounds.height / 2 > 12)
         {
-            graphics.setColor(AppTheme.visualiser.foregroundLight50);
+            graphics.setColor(AppTheme.visualiser.blackNoteForeground);
+            if (pianoAction.isWhite)
+            {
+                graphics.setColor(AppTheme.visualiser.whiteNoteForeground);
+            }
             int circleSize = Math.min(bounds.width / 2, 12);
             graphics.fillOval(bounds.x + (bounds.width / 2) - (circleSize/2), bounds.y - 4 - circleSize, circleSize, circleSize);
         }

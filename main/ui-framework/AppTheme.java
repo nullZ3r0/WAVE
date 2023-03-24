@@ -36,6 +36,8 @@ class VisualiserTheme
     public Color octaveDivider;
     public Color whiteNoteBackground;
     public Color blackNoteBackground;
+    public Color whiteNoteForeground;
+    public Color blackNoteForeground;
 }
 class ButtonTheme
 {
