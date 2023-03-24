@@ -54,19 +54,19 @@ public class MidiInputReceiver implements Receiver
             // convertedData[1] is the note value as an int.
             // convertedData[2] is the note velocity.
 
-            int keyValue = convertedData[1];
-            int keyVelocity = convertedData[2];
+            int midiValue = convertedData[1];
+            int midiVelocity = convertedData[2];
             boolean keyPressed;
             if (convertedData.length == 3)
             {
-                keyPressed = keyVelocity > 0;
+                keyPressed = midiVelocity > 0;
             }
             else
             {
                 keyPressed = convertedData[3] > 0;
             }
 
-            Wave.changePianoKeyPressed(keyValue, keyVelocity, keyPressed);
+            Wave.changePlayerKeyboardPressed(new PianoAction(0, midiValue, midiVelocity, keyPressed));
         }
     }
 

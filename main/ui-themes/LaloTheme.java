@@ -3,11 +3,11 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
-public class StandardTheme extends UITheme
+public class LaloTheme extends UITheme
 {
     public void apply()
     {
-        AppTheme.name = "Default";
+        AppTheme.name = "Sakura Lalo";
         AppTheme.backgroundLight3 = new Color(79, 82, 106);
         AppTheme.backgroundLight2 = new Color(68, 71, 91);
         AppTheme.backgroundLight1 = new Color(57, 59, 77);
@@ -16,12 +16,25 @@ public class StandardTheme extends UITheme
         AppTheme.backgroundDark2  = new Color(24, 25, 33);
         AppTheme.backgroundDark3  = new Color(13, 14, 18);
 
+        // Mixing colours
+        Color mixer = new Color(227, 142, 158);
+        double percent = 0;
+        double percentDark = 1;
+
+        AppTheme.backgroundLight3 = AppTheme.mixColor(AppTheme.backgroundLight3,mixer, percent);
+        AppTheme.backgroundLight2 = AppTheme.mixColor(AppTheme.backgroundLight2,mixer, percent);
+        AppTheme.backgroundLight1 = AppTheme.mixColor(AppTheme.backgroundLight1,mixer, percent);
+        AppTheme.background = mixer;
+        AppTheme.backgroundDark1 = AppTheme.mixColor(AppTheme.backgroundDark1,mixer, percentDark);
+        AppTheme.backgroundDark2 = AppTheme.mixColor(AppTheme.backgroundDark2,mixer, percentDark);
+        AppTheme.backgroundDark3 = AppTheme.mixColor(AppTheme.backgroundDark3,mixer, percentDark);
+
         Color white25 = new Color(255, 255, 255,192);
         Color white50 = new Color(255, 255, 255,128);
 
         Color uniqueBackground = new Color(51, 178, 115);
 
-        AppTheme.window = AppTheme.backgroundDark3;
+        AppTheme.window = new Color(217, 101, 123);
         AppTheme.foreground = new Color(255, 255, 255);
 
         AppTheme.button = new ButtonTheme();
@@ -43,20 +56,19 @@ public class StandardTheme extends UITheme
         AppTheme.visualiser.backgroundLight50 = AppTheme.fadeColor(AppTheme.black, 0.5);
         AppTheme.visualiser.foreground = AppTheme.white;
         AppTheme.visualiser.foregroundLight50 = AppTheme.fadeColor(AppTheme.visualiser.foreground, 0.5);
-        AppTheme.visualiser.boardBackground = AppTheme.backgroundDark3;
+        AppTheme.visualiser.boardBackground = AppTheme.window; //AppTheme.mixColor(AppTheme.backgroundDark3,mixer, 0.75);
         AppTheme.visualiser.whiteKeyBackground = AppTheme.white;
         AppTheme.visualiser.whiteKeyForeground = AppTheme.backgroundDark2;
-        AppTheme.visualiser.whiteKeyPlaying = new Color(88, 135, 211);
+        AppTheme.visualiser.whiteKeyPlaying = new Color(140, 109, 177);
         AppTheme.visualiser.blackKeyBackground = AppTheme.backgroundDark3;
         AppTheme.visualiser.blackKeyForeground = AppTheme.white;
         AppTheme.visualiser.blackKeyPlaying = AppTheme.darkenColor(AppTheme.visualiser.whiteKeyPlaying, 0.5);
         AppTheme.visualiser.octaveDividerLight1 = AppTheme.backgroundDark1;
         AppTheme.visualiser.octaveDivider = AppTheme.backgroundDark3;
-        AppTheme.visualiser.keyPlaying = new Color(236, 151, 62);
-        AppTheme.visualiser.whiteNoteBackground = new Color(162, 130, 215);
-        AppTheme.visualiser.blackNoteBackground = AppTheme.darkenColor(AppTheme.visualiser.whiteNoteBackground, 0.666);
-
-        //AppTheme.visualiser.whiteKeyPlaying = new Color(69, 126, 217);
+        AppTheme.visualiser.whiteNoteBackground = new Color(106, 124, 203);
+        AppTheme.visualiser.blackNoteBackground = AppTheme.darkenColor(AppTheme.visualiser.whiteNoteBackground, 0.5);
+        AppTheme.visualiser.whiteKeyPressedCorrect = new Color(89, 180, 118);
+        AppTheme.visualiser.blackKeyPressedCorrect = AppTheme.darkenColor(AppTheme.visualiser.whiteKeyPressedCorrect, 0.5);
 
         // Initialise custom fonts
         try
@@ -82,7 +94,7 @@ public class StandardTheme extends UITheme
         UIManager.put("TitlePane.foreground", AppTheme.colorUIResourceFromColor(AppTheme.foreground));
         UIManager.put("TitlePane.buttonHoverBackground", AppTheme.colorUIResourceFromColor(AppTheme.background));
         UIManager.put("TitlePane.buttonPressedBackground", AppTheme.colorUIResourceFromColor(AppTheme.backgroundDark1));
-        UIManager.put("RootPane.background", AppTheme.colorUIResourceFromColor(AppTheme.backgroundDark3));
+        UIManager.put("RootPane.background", AppTheme.colorUIResourceFromColor(AppTheme.window));
 
     }
 }

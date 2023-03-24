@@ -1,13 +1,12 @@
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class WaveGraphics extends Thread
 {
     // Static stuff
+    private static Map<?, ?> desktopHints = (Map<?, ?>) Toolkit.getDefaultToolkit().getDesktopProperty("awt.font.desktophints");
     private static Rectangle transformToRectangle(UITransform transform, Component parent)
     {
         if (transform == null) {return new Rectangle();}
@@ -114,17 +113,39 @@ public class WaveGraphics extends Thread
         }
     }
 
-    private static void drawPianoKey(Graphics2D graphics, Rectangle bounds, PianoAction pianoAction)
+    private static void drawPianoKey(Graphics2D graphics, Rectangle bounds, PianoAction pianoAction, long tickCurrent)
     {
         if (pianoAction.isWhite)
         {
-            if (pianoAction.isPressed)
+            if (pianoAction.isPlaying)
             {
-                graphics.setColor(AppTheme.visualiser.whiteKeyPlaying);
+                graphics.setColor(AppTheme.visualiser.keyPlaying);
+                graphics.fillRect(bounds.x, bounds.y - 4, bounds.width, 4);
+            }
+
+            if (pianoAction.isPlaying && !pianoAction.isFeedback)
+            {
+                graphics.setColor(AppTheme.visualiser.whiteNoteBackground);
             }
             else
             {
                 graphics.setColor(AppTheme.visualiser.whiteKeyBackground);
+            }
+
+            if (pianoAction.isPressed)
+            {
+                if (pianoAction.isCorrect)
+                {
+                    graphics.setColor(AppTheme.visualiser.whiteKeyPressedCorrect);
+                    if (pianoAction.tickStart + pianoAction.tickDuration < tickCurrent)
+                    {
+                        graphics.setColor(AppTheme.visualiser.whiteKeyPlaying);
+                    }
+                }
+                else
+                {
+                    graphics.setColor(AppTheme.visualiser.whiteKeyPressedIncorrect);
+                }
             }
 
             graphics.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
@@ -134,13 +155,35 @@ public class WaveGraphics extends Thread
         else
         {
             // Draw the black key
-            if (pianoAction.isPressed)
+            if (pianoAction.isPlaying)
             {
-                graphics.setColor(AppTheme.visualiser.blackKeyPlaying);
+                graphics.setColor(AppTheme.visualiser.keyPlaying);
+                graphics.fillRect(bounds.x, bounds.y - 6, bounds.width, 4);
+            }
+
+            if (pianoAction.isPlaying && !pianoAction.isFeedback)
+            {
+                graphics.setColor(AppTheme.visualiser.blackNoteBackground);
             }
             else
             {
                 graphics.setColor(AppTheme.visualiser.blackKeyBackground);
+            }
+
+            if (pianoAction.isPressed)
+            {
+                if (pianoAction.isCorrect)
+                {
+                    graphics.setColor(AppTheme.visualiser.blackKeyPressedCorrect);
+                    if (pianoAction.tickStart + pianoAction.tickDuration < tickCurrent)
+                    {
+                        graphics.setColor(AppTheme.visualiser.blackKeyPlaying);
+                    }
+                }
+                else
+                {
+                    graphics.setColor(AppTheme.visualiser.blackKeyPressedIncorrect);
+                }
             }
             graphics.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
 
@@ -162,11 +205,20 @@ public class WaveGraphics extends Thread
         {
             graphics.setColor(AppTheme.visualiser.blackNoteBackground);
         }
-        graphics.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
-        graphics.setColor(new Color(255,255,255,192));
-        graphics.fillRect(bounds.x, bounds.y, bounds.width, -4);
-        graphics.setColor(new Color(0,0,0,192));
-        graphics.fillRect(bounds.x, bounds.y + bounds.height, bounds.width, 4);
+
+        //graphics.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+
+        // Note
+        bounds.height += 4;
+        graphics.fillRoundRect(bounds.x, bounds.y + bounds.height, bounds.width, -bounds.height, bounds.width / 2, bounds.width / 2);
+
+        // Back dot
+        graphics.setColor(AppTheme.visualiser.backgroundLight50);
+        graphics.fillOval(bounds.x + (bounds.width / 4), bounds.y + bounds.height + 4, bounds.width / 2, bounds.width / 2);
+
+        // Front dot
+        graphics.setColor(AppTheme.visualiser.foregroundLight50);
+        graphics.fillOval(bounds.x + (bounds.width / 4), bounds.y - 4 - bounds.width / 2, bounds.width / 2, bounds.width / 2);
     }
 
     public static int mapMidiValue(PianoAction pianoAction, int rootKey, int whiteKeyWidth, int blackKeyWidth)
@@ -261,41 +313,45 @@ public class WaveGraphics extends Thread
         else if (object.getClass() == AppVisualiser.class)
         {
             AppVisualiser visualiser = (AppVisualiser) object;
+            if (desktopHints != null)
+            {
+                graphics.setRenderingHints(desktopHints);
+            }
             graphics.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
             graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
             Dimension arcs = new Dimension(Math.min(visualiser.transform.getCornerRadius(), height), Math.min(visualiser.transform.getCornerRadius(), height));
 
             // Get keyboard sizing info
-            if (visualiser.keyboard.useAutoDimensions() == true)
+            MidiKeyboard keyboard = visualiser.keyboard;
+            if (keyboard.useAutoDimensions() == true)
             {
-                visualiser.keyboard.autoDimensions(width);
+                keyboard.autoDimensions(width);
             }
 
-            int keyboardHeight = visualiser.keyboard.getHeight();
-            int blackKeyHeight = visualiser.keyboard.getBlackKeyHeight();
-            int whiteKeyWidth = visualiser.keyboard.getWhiteKeyWidth();
-            int blackKeyWidth = visualiser.keyboard.getBlackKeyWidth();
+            int keyboardHeight = keyboard.getHeight();
+            int blackKeyHeight = keyboard.getBlackKeyHeight();
+            int whiteKeyWidth = keyboard.getWhiteKeyWidth();
+            int blackKeyWidth = keyboard.getBlackKeyWidth();
 
             // Get position info
             int keyboardY = height - keyboardHeight;
-            int keyboardX = visualiser.keyboard.getBufferWidth();
+            int keyboardX = keyboard.getBufferWidth();
             int playbackHeight = height - keyboardHeight;
-            long playheadTick = visualiser.keyboard.playheadTick;
+            long tickCurrent = keyboard.tickCurrent;
+            long seekTick = keyboard.seekTick;
 
             // Get keyboard colour info
             Color boardBackground = AppTheme.visualiser.boardBackground;
-            Color whiteKeyBackground = AppTheme.visualiser.whiteKeyBackground;
-            Color whiteKeyForeground = AppTheme.visualiser.whiteKeyForeground;
 
             // Get key info
-            PianoAction[] pianoActions = visualiser.keyboard.getKeys();
+            PianoAction[] pianoActions = keyboard.getKeys();
 
             // Get note info
             ArrayList<PianoAction> noteActions = visualiser.keyboard.getNoteActions();
 
             // Get keyboard info
-            int rootKey = visualiser.keyboard.rootKeyValue;
-            int tailKey = visualiser.keyboard.tailKeyValue;
+            int rootKey = keyboard.rootKeyValue;
+            int tailKey = keyboard.getTail();
 
             // Draws the background for the MIDI notes to be placed on (can have rounded corners)
             graphics.setColor(visualiser.getBackground());
@@ -305,21 +361,20 @@ public class WaveGraphics extends Thread
             graphics.setColor(boardBackground);
             graphics.fillRoundRect(0, keyboardY, width, keyboardHeight, arcs.width, arcs.height);
 
-
             // Draws the raining notes
+            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             Rectangle whiteNoteBounds = new Rectangle(0, 0, whiteKeyWidth - 4, -50);
             Rectangle blackNoteBounds = new Rectangle(0, 0, blackKeyWidth - 4, -50);
-
             for (PianoAction noteAction : noteActions)
             {
-                long currentPosition = noteAction.tickStart - playheadTick;
+                long currentPosition = noteAction.tickStart - tickCurrent;
 
                 // Only draw notes that are in the keyboard's range and the playback's range
-                if (noteAction.midiValue >= rootKey && noteAction.midiValue <= tailKey && currentPosition <= 1000 && currentPosition + noteAction.tickDuration >= 0)
+                if (keyboard.noteActionVisible(noteAction))
                 {
                     // Draw white notes first
-                    double calcY = playbackHeight * (1.0 - currentPosition / 1000.0);
-                    double heightY = playbackHeight * (noteAction.tickDuration / 1000.0);
+                    double calcY = playbackHeight * (1.0 - currentPosition / (double) seekTick);
+                    double heightY = playbackHeight * (noteAction.tickDuration / (double) seekTick);
 
                     if (noteAction.isWhite)
                     {
@@ -327,7 +382,6 @@ public class WaveGraphics extends Thread
                         whiteNoteBounds.height = -(int) Math.round(heightY);
                         whiteNoteBounds.x = 2 + keyboardX + mapMidiValue(noteAction, rootKey, whiteKeyWidth, blackKeyWidth);
                         drawNote(graphics, whiteNoteBounds, noteAction);
-
                     }
                     else
                     {
@@ -338,48 +392,55 @@ public class WaveGraphics extends Thread
                     }
                 }
             }
+            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 
             // Draws the white keys
-            // Starting from A0
-            int a = 0;
             Rectangle whiteKeyBounds = new Rectangle(0, height - keyboardHeight, whiteKeyWidth, keyboardHeight);
             graphics.setStroke(new BasicStroke(2));
-            for (int i = 0; i < pianoActions.length; i++)
+            for (PianoAction pianoAction : pianoActions)
             {
-                if (pianoActions[i].isWhite)
+                if (pianoAction.isWhite && keyboard.pianoActionVisible(pianoAction))
                 {
-                    int keyPosition = (i + 1) % 12;
+                    int testX = mapMidiValue(pianoAction, rootKey, whiteKeyWidth, blackKeyWidth);
+                    whiteKeyBounds.x = keyboardX + testX;
+
+                    // Calculate the distance of the next key relative to C0
+                    // 0 1 2 3 4 5 6 7 8 9 10 11
+                    // W B W B W W B W B W B  W
+                    int keyPosition = (pianoAction.midiValue) % 12;
                     switch(keyPosition)
                     {
-                        case 3:
+                        case 0:
                             // Create a octave dividers
                             graphics.setColor(AppTheme.visualiser.octaveDivider);
-                            graphics.fillRect(keyboardX + (a * whiteKeyWidth) + whiteKeyWidth - 1, 0, 2, height - keyboardHeight);
+                            graphics.fillRect(whiteKeyBounds.x - 2, 0, 3, height - keyboardHeight);
+
+                            // Set the font
+                            int baseOctave = (12 * (int) (Math.floor(Math.abs(pianoAction.midiValue/12)))) / 12;
+
+                            graphics.setColor(AppTheme.fadeColor(AppTheme.visualiser.foreground, 0.5));
+                            graphics.setFont(AppTheme.textFont.deriveFont(16F));
+                            graphics.drawString("C" + String.valueOf(baseOctave), whiteKeyBounds.x + 4, height - keyboardHeight - 4);
                             break;
-                        case 8:
+                        case 5:
                             // Create a light dividers
                             graphics.setColor(AppTheme.visualiser.octaveDividerLight1);
-                            graphics.fillRect(keyboardX + (a * whiteKeyWidth) + whiteKeyWidth - 1, 0, 2, height - keyboardHeight);
+                            graphics.fillRect(whiteKeyBounds.x - 2, 0, 3, height - keyboardHeight);
                     }
 
-                    int testX = mapMidiValue(pianoActions[i], rootKey, whiteKeyWidth, blackKeyWidth);
-                    whiteKeyBounds.x = keyboardX + testX;
-                    drawPianoKey(graphics, whiteKeyBounds, pianoActions[i]);
-                    a++;
+                    drawPianoKey(graphics, whiteKeyBounds, pianoAction, tickCurrent);
                 }
             }
 
             // Draws the black keys
-            // Create default bounds
             Rectangle blackKeyBounds = new Rectangle(keyboardX + whiteKeyWidth - (blackKeyWidth / 2), keyboardY + 2, blackKeyWidth, blackKeyHeight);
-
             for (PianoAction pianoAction : pianoActions)
             {
-                if (pianoAction.isWhite == false)
+                if (!pianoAction.isWhite && keyboard.pianoActionVisible(pianoAction))
                 {
                     int testX = mapMidiValue(pianoAction, rootKey, whiteKeyWidth, blackKeyWidth);
                     blackKeyBounds.x = keyboardX + testX;
-                    drawPianoKey(graphics, blackKeyBounds, pianoAction);
+                    drawPianoKey(graphics, blackKeyBounds, pianoAction, tickCurrent);
                 }
             }
         }
@@ -418,6 +479,19 @@ public class WaveGraphics extends Thread
         }
     }
 
+    private boolean enableHighQuality = true;
+    private long nanosecondsPerFrame = 1666666;
+    public void enableHighQuality(boolean enableHighQuality)
+    {
+        this.enableHighQuality = enableHighQuality;
+    }
+
+    public void enableHighQuality(boolean enableHighQuality, int targetFPS)
+    {
+        this.enableHighQuality = enableHighQuality;
+        this.nanosecondsPerFrame = (long) (1/ (double) targetFPS * 10000000.0);
+    }
+
     @Override
     public void run()
     {
@@ -430,9 +504,27 @@ public class WaveGraphics extends Thread
                     WaveGraphics.update(object);
                 }
 
+                if (enableHighQuality)
+                {
+                    // Runs at a consistent 60fps using an expensive method
+                    Thread.sleep(0);
+                    long start = System.nanoTime();
+                    long end = 0;
+                    do
+                    {
+                        Thread.onSpinWait();
+                        end = System.nanoTime();
+                    }
+                    while(start + nanosecondsPerFrame >= end);
+                }
+                else
+                {
+                    // Runs at a consistent 30fps using Thread.sleep
+                    Thread.sleep(32); // Around (30 fps)
+                }
                 //Thread.sleep(16); // Around (60 fps)
                 //Thread.sleep(32); // Around (30 fps)
-                Thread.sleep(20); // Around (20 fps)
+                //Thread.sleep(20); // Around (20 fps)
             }
             catch (InterruptedException e)
             {

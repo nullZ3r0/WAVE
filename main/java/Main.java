@@ -1,7 +1,11 @@
+import com.formdev.flatlaf.FlatLaf;
+
 import javax.swing.*;
+import javax.swing.plaf.ColorUIResource;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Collections;
 
 public class Main
 {
@@ -11,7 +15,6 @@ public class Main
         AppTheme.setup();
 
         // Modify the current Theme's properties that require java objects
-        UIManager.put("TitlePane.font", AppTheme.titleFont.deriveFont(Font.BOLD, 12));
         UIManager.put("TitlePane.buttonSize", new Dimension(32, 24));
 
         // Setup look and feel to act as base theme for all objects, expect them to be overridden
@@ -26,10 +29,10 @@ public class Main
 
         // Midi testing
         MidiConnector midiConnector = new MidiConnector();
-        midiConnector.printDevices();
 
         // Initialise custom render thread
         WaveGraphics customRenderer = new WaveGraphics();
+        customRenderer.enableHighQuality(true);
         customRenderer.setDaemon(true);
 
         // Naming hierarchy and Class hierarchy
@@ -72,9 +75,7 @@ public class Main
         if (testReceiver != null)
         {
             testReceiver.startListening();
-            midiConnector.printReceivers();
-            Wave.setVisualiser(mainPanel.visualiser);
-            Wave.setMidiPlayer(midiPlayer);
+            //midiConnector.printReceivers();
             Wave.setMidiInputReceiver(testReceiver);
         }
         else
@@ -82,9 +83,12 @@ public class Main
             midiConnector.printReceivers();
         }
 
+        Wave.setVisualiser(mainPanel.visualiser);
+        Wave.setMidiPlayer(midiPlayer);
         Wave.setMidiSequence("main/assets/midi-library/pattern 6.mid");
         Wave.loadMidiSequence();
         Wave.loadNoteActions();
         Wave.playMidiSequence();
+        Wave.enableFeedback(false);
     }
 }

@@ -8,27 +8,82 @@ public class Wave implements Runnable
     public static MidiSequence midiSequence;
     public static MidiKeyboard playerKeyboard = new MidiKeyboard();
     public static MidiKeyboard midiKeyboard = new MidiKeyboard();
+    private static long tickAcceptance = 8;
+    private static long tickCurrent = 0;
+    private static boolean enableFeedback = true;
 
     /** Methods **/
-    public static void changePianoKeyPressed(int keyValue, int keyVelocity, boolean keyPressed)
+    private static void applyFeedback(PianoAction pianoAction)
     {
-        // Play or stop the note
-        if (midiPlayer != null)
+        pianoAction.isCorrect = false;
+        if (midiSequence != null)
         {
-            if (keyPressed)
+            // Get midiKeyboard PianoAction and compare
+            PianoAction comparisonPianoAction = midiSequence.getNoteActionFromPianoAction(pianoAction, tickAcceptance);
+
+            if (comparisonPianoAction != null)
             {
-                midiPlayer.playNote(keyValue, keyVelocity);
-            }
-            else
-            {
-                midiPlayer.stopNote(keyValue);
+                long noteTickStart = comparisonPianoAction.tickStart;
+                long noteTickEnd = comparisonPianoAction.tickStart + comparisonPianoAction.tickDuration;
+
+                if (pianoAction.isPressed)
+                {
+                    if (pianoAction.tickStart >= noteTickStart - tickAcceptance && pianoAction.tickStart <= noteTickEnd)
+                    {
+                        pianoAction.tickDuration = noteTickEnd - comparisonPianoAction.tickStart;
+                        pianoAction.isCorrect = true;
+                    }
+                }
+                else
+                {
+                    pianoAction.isCorrect = true;
+                }
             }
         }
+    }
+
+    public static void changePlayerKeyboardPressed(PianoAction pianoAction)
+    {
+        // Update player keyboard
+        playerKeyboard.changeKeyPressed(pianoAction.midiValue, pianoAction.midiVelocity, pianoAction.isPressed);
 
         // Send visual feedback
         if (visualiser != null)
         {
-            visualiser.keyboard.changeKeyPressed(keyValue, keyVelocity, keyPressed);
+            if (enableFeedback)
+            {
+                // Do basic feedback
+                pianoAction.tickStart = tickCurrent;
+                applyFeedback(pianoAction);
+            }
+            else
+            {
+                pianoAction.tickStart = -9999;
+                pianoAction.tickDuration = 0;
+                pianoAction.isCorrect = true;
+            }
+            visualiser.keyboard.changeKeyTick(pianoAction.midiValue, pianoAction.tickStart, pianoAction.tickDuration);
+            visualiser.keyboard.changeKeyPressed(pianoAction);
+        }
+    }
+
+    public static void changeMidiKeyboardPressed(PianoAction pianoAction)
+    {
+        // Play or stop the note
+        if (midiPlayer != null)
+        {
+            if (pianoAction.isPressed)
+            {
+                midiPlayer.playNote(pianoAction.midiValue, pianoAction.midiVelocity);
+            }
+            else
+            {
+                midiPlayer.stopNote(pianoAction.midiValue);
+            }
+
+            visualiser.keyboard.getKey(pianoAction.midiValue).isPlaying = pianoAction.isPressed;
+            //visualiser.keyboard.changeKeyTick(pianoAction.midiValue, pianoAction.tickStart, pianoAction.tickDuration);
+            //visualiser.keyboard.changeKeyPressed(pianoAction);
         }
     }
 
@@ -46,6 +101,10 @@ public class Wave implements Runnable
         if (midiSequence != null)
         {
             midiSequence.load();
+            if (visualiser != null)
+            {
+                visualiser.keyboard.tickPerBar = midiSequence.getTickPerBar();
+            }
         }
     }
 
@@ -65,11 +124,13 @@ public class Wave implements Runnable
         }
     }
 
-    public static void setPlayhead(long tick)
+    public static void tickUpdate(long tick)
     {
+        tickCurrent = tick;
+
         if (visualiser != null)
         {
-            visualiser.keyboard.setPlayheadTick(tick);
+            visualiser.keyboard.setTickCurrent(tick);
         }
     }
 
@@ -110,5 +171,21 @@ public class Wave implements Runnable
             midiSequence = null;
         }
         midiSequence = new MidiSequence(midiFile);
+    }
+
+    public static void enableFeedback(boolean enable)
+    {
+        if (visualiser != null)
+        {
+            enableFeedback = enable;
+            for (PianoAction pianoAction : visualiser.keyboard.getKeys())
+            {
+                pianoAction.isFeedback = enableFeedback;
+            }
+        }
+        else
+        {
+            System.out.println("Must set a visualiser first!");
+        }
     }
 }

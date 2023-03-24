@@ -22,7 +22,6 @@ public class MidiPlayer
 
             // load an instrument
             midiSynth.loadInstrument(instruments[0]);
-            System.out.println(this.midiSynth.getMaxPolyphony());
             isReady = true;
         } catch (MidiUnavailableException e)
         {

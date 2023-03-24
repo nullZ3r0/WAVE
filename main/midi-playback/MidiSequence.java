@@ -1,6 +1,7 @@
 import javax.sound.midi.*;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -24,6 +25,9 @@ class PianoAction
 {
     /** Attributes **/
     public boolean isPressed = false;
+    public boolean isPlaying = false;
+    public boolean isCorrect = false;
+    public boolean isFeedback = false;
     public boolean isWhite = true;
     public int midiValue = 0;
     public int midiVelocity = 0;
@@ -71,10 +75,11 @@ public class MidiSequence extends Thread
     public Boolean pause = false;
     private Boolean running = false;
     private int tempo = 500000;
-    private int PPQ = 96;
+    private int PPQ = 96; // How many ticks are in a beat
     private double beatsPerMinute = 120; // 120 BPM is the same as a tempo value of 500,000 microseconds per quarter note
+    private double beatsPerBar = 4;
     private double tickDuration = 5; // In milliseconds
-    private long currentTick = 0;
+    private long currentTick = -512;
     private long duration = 0;
     private HashMap<Long, ArrayList<PianoAction>> pianoEvents = new HashMap<Long, ArrayList<PianoAction>>();
     public ArrayList<PianoAction> pianoActions = new ArrayList<PianoAction>();
@@ -106,8 +111,8 @@ public class MidiSequence extends Thread
     public void setTempo(int set)
     {
         this.tempo = set;
-        this.beatsPerMinute = 60000000 / this.tempo;
-        this.tickDuration = ((double) this.tempo / (double) this.PPQ) * 0.001;
+        this.beatsPerMinute = Math.round(60000000.0 / (double) this.tempo);
+        this.tickDuration = 60000.0 / (this.beatsPerMinute * (double) this.PPQ);
     }
 
     public void setBeatsPerMinute(double set)
@@ -200,13 +205,6 @@ public class MidiSequence extends Thread
 
                         this.setTempo(tempo);
                         this.addTempoAction(event.getTick(), new TempoAction(event.getTick(), tempo));
-                        /*
-                        System.out.println("Set tempo: " + this.tempo);
-                        System.out.println("The BPM is: " + this.beatsPerMinute);
-                        System.out.println("The length of 1 tick is: " + this.tickDuration + "ms");
-
-                         */
-
                     }
                 }
             }
@@ -296,7 +294,50 @@ public class MidiSequence extends Thread
             }
         }
 
+        this.noteActions = noteActions;
         return noteActions;
+    }
+
+    public PianoAction getNoteActionFromPianoAction(PianoAction pianoAction, long tickAcceptance)
+    {
+        if (this.noteActions.size() == 0)
+        {
+            System.out.println("MidiSequence.getNoteActions() hasn't been called before!");
+            this.getNoteActions();
+        }
+
+        if (this.noteActions.size() != 0)
+        {
+            PianoAction mostRecentNote = null;
+            for (PianoAction noteAction : this.noteActions)
+            {
+                if (noteAction.midiValue == pianoAction.midiValue && noteAction.tickStart + noteAction.tickDuration + tickAcceptance >= pianoAction.tickStart)
+                {
+                    if(mostRecentNote == null)
+                    {
+                        mostRecentNote = noteAction;
+                    }
+                    else
+                    {
+                        if (mostRecentNote.tickStart > noteAction.tickStart)
+                        {
+                            mostRecentNote = noteAction;
+                        }
+                    }
+                }
+            }
+            return mostRecentNote;
+        }
+        else
+        {
+            System.out.println("This MidiSequence has no notes!");
+            return null;
+        }
+    }
+
+    public long getTickPerBar()
+    {
+        return (long) (this.PPQ * this.beatsPerBar);
     }
 
     @Override
@@ -307,9 +348,10 @@ public class MidiSequence extends Thread
             this.running = true;
             try
             {
-                for (currentTick = 0; currentTick <= duration; currentTick++)
+                long startDelay = -1024;
+                for (currentTick = startDelay; currentTick <= duration; currentTick++)
                 {
-                    Wave.setPlayhead(currentTick);
+                    Wave.tickUpdate(currentTick);
                     ArrayList<PianoAction> pianoEvent = pianoEvents.get(currentTick);
                     ArrayList<TempoAction> tempoEvent = tempoEvents.get(currentTick);
 
@@ -317,7 +359,7 @@ public class MidiSequence extends Thread
                     {
                         for (PianoAction pianoAction : pianoEvent)
                         {
-                            Wave.changePianoKeyPressed(pianoAction.midiValue, pianoAction.midiVelocity, pianoAction.isPressed);
+                            Wave.changeMidiKeyboardPressed(pianoAction);
                         }
                     }
 
@@ -329,7 +371,21 @@ public class MidiSequence extends Thread
                         }
                     }
 
-                    Thread.sleep((long) this.tickDuration);
+                    DecimalFormat df = new DecimalFormat("##.######");
+                    long ns = Long.valueOf(df.format(this.tickDuration).replace(".",""));
+                    Thread.sleep(0);
+                    // This allows us to wait for a much more accurate amount of time
+                    // Very important when dealing with music
+                    final long INTERVAL = ns;
+                    long start = System.nanoTime();
+                    long end = 0;
+                    do
+                    {
+                        Thread.onSpinWait();
+                        end = System.nanoTime();
+                    }
+                    while(start + INTERVAL >= end);
+
                 }
             }
             catch (InterruptedException e)
