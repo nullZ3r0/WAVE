@@ -85,9 +85,15 @@ public class Main
 
         Wave.setVisualiser(mainPanel.visualiser);
         Wave.setMidiPlayer(midiPlayer);
-        Wave.setMidiSequence("main/assets/midi-library/pattern 6.mid");
+        Wave.setMidiSequence("main/assets/midi-library/pattern 9.mid");
         Wave.loadMidiSequence();
         Wave.loadNoteActions();
+
+        // Rough plan for Keyboard.autoSetSeek()
+        double calc1 = Math.sqrt((double) Wave.midiSequence.getPPQ() / 32.0);
+        double calc2 = Math.max(Wave.midiSequence.getBeatsPerMinute() / 120.0, 1.0);
+        Wave.visualiser.keyboard.seekTick = (int) (1000.0 * calc1 * calc2);
+
         Wave.playMidiSequence();
         Wave.enableFeedback(false);
     }

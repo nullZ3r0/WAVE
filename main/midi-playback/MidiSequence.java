@@ -74,7 +74,9 @@ public class MidiSequence extends Thread
     private Sequence sequence;
     public Boolean pause = false;
     private Boolean running = false;
+    private Boolean overrideTempo = false;
     private int tempo = 500000;
+    private int tempoOverride = 500000;
     private int PPQ = 96; // How many ticks are in a beat
     private double beatsPerMinute = 120; // 120 BPM is the same as a tempo value of 500,000 microseconds per quarter note
     private double beatsPerBar = 4;
@@ -146,6 +148,15 @@ public class MidiSequence extends Thread
         }
 
         event.add(tempoAction);
+    }
+    public int getPPQ()
+    {
+        return this.PPQ;
+    }
+
+    public double getBeatsPerMinute()
+    {
+        return this.beatsPerMinute;
     }
 
     public void load()
@@ -340,6 +351,17 @@ public class MidiSequence extends Thread
         return (long) (this.PPQ * this.beatsPerBar);
     }
 
+    public void overrideTempo(boolean overrideTempo, int BPM)
+    {
+        this.overrideTempo = overrideTempo;
+        if (overrideTempo)
+        {
+            int newTempo = (int) Math.round(60000000.0 / (double) BPM);
+            System.out.println(newTempo);
+            tempoOverride = newTempo;
+        }
+    }
+
     @Override
     public void run()
     {
@@ -349,11 +371,17 @@ public class MidiSequence extends Thread
             try
             {
                 long startDelay = -1024;
+
+                if (overrideTempo)
+                {
+                    setTempo(tempoOverride);
+                    System.out.println(this.tickDuration);
+                }
+
                 for (currentTick = startDelay; currentTick <= duration; currentTick++)
                 {
                     Wave.tickUpdate(currentTick);
                     ArrayList<PianoAction> pianoEvent = pianoEvents.get(currentTick);
-                    ArrayList<TempoAction> tempoEvent = tempoEvents.get(currentTick);
 
                     if (pianoEvent != null)
                     {
@@ -363,15 +391,19 @@ public class MidiSequence extends Thread
                         }
                     }
 
-                    if (tempoEvent != null)
+                    if (!overrideTempo)
                     {
-                        for (TempoAction tempoAction : tempoEvent)
+                        ArrayList<TempoAction> tempoEvent = tempoEvents.get(currentTick);
+                        if (tempoEvent != null)
                         {
-                            this.setTempo(tempoAction.midiValue);
+                            for (TempoAction tempoAction : tempoEvent)
+                            {
+                                this.setTempo(tempoAction.midiValue);
+                            }
                         }
                     }
 
-                    DecimalFormat df = new DecimalFormat("##.######");
+                    DecimalFormat df = new DecimalFormat("##.000000");
                     long ns = Long.valueOf(df.format(this.tickDuration).replace(".",""));
                     Thread.sleep(0);
                     // This allows us to wait for a much more accurate amount of time

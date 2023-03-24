@@ -212,13 +212,13 @@ public class WaveGraphics extends Thread
         bounds.height += 4;
         graphics.fillRoundRect(bounds.x, bounds.y + bounds.height, bounds.width, -bounds.height, bounds.width / 2, bounds.width / 2);
 
-        // Back dot
-        graphics.setColor(AppTheme.visualiser.backgroundLight50);
-        graphics.fillOval(bounds.x + (bounds.width / 4), bounds.y + bounds.height + 4, bounds.width / 2, bounds.width / 2);
-
         // Front dot
-        graphics.setColor(AppTheme.visualiser.foregroundLight50);
-        graphics.fillOval(bounds.x + (bounds.width / 4), bounds.y - 4 - bounds.width / 2, bounds.width / 2, bounds.width / 2);
+        if (-bounds.height / 2 > 12)
+        {
+            graphics.setColor(AppTheme.visualiser.foregroundLight50);
+            int circleSize = Math.min(bounds.width / 2, 12);
+            graphics.fillOval(bounds.x + (bounds.width / 2) - (circleSize/2), bounds.y - 4 - circleSize, circleSize, circleSize);
+        }
     }
 
     public static int mapMidiValue(PianoAction pianoAction, int rootKey, int whiteKeyWidth, int blackKeyWidth)
