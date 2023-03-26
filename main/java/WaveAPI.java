@@ -1,7 +1,16 @@
+import javax.swing.*;
 import java.awt.*;
 
 public class WaveAPI
 {
+    public static void debugAction(String actionName)
+    {
+        System.out.println("Debug action: " + actionName);
+        if (actionName.matches("pause"))
+        {
+            Wave.togglePlayMidiSequence();
+        }
+    }
     public static void showCard(Container container, String name)
     {
         System.out.println("Test API: showCard");

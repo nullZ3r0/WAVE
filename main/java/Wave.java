@@ -108,19 +108,50 @@ public class Wave implements Runnable
         }
     }
 
+    public static void startMidiSequence()
+    {
+        if (midiSequence != null)
+        {
+            midiSequence.play();
+        }
+    }
+
+    public static void togglePlayMidiSequence()
+    {
+        if (midiSequence != null)
+        {
+            if (midiSequence.isRunning())
+            {
+                if (midiSequence.isDone())
+                {
+                    midiSequence.restart();
+                }
+                else
+                {
+                    if (midiSequence.isPlaying())
+                    {
+                        midiSequence.pause();
+                    }
+                    else
+                    {
+                        midiSequence.play();
+                    }
+                }
+            }
+        }
+    }
     public static void playMidiSequence()
     {
         if (midiSequence != null)
         {
-            midiSequence.start();
+            //midiSequence.pause();
         }
     }
-
     public static void pauseMidiSequence()
     {
         if (midiSequence != null)
         {
-            midiSequence.pause = true;
+            //midiSequence.resume();
         }
     }
 

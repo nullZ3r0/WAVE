@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Collections;
+import java.util.HashMap;
 
 public class Main
 {
@@ -46,10 +47,14 @@ public class Main
         // DO NOT change this to be LOWER THAN 1000 x 600!
         mainWindow.setMinimumSize(new Dimension(1000, 600));
 
+        // Connect keybind framework to mainPanel
+        Keybind keybind = new Keybind();
+        mainWindow.add(keybind.swingConnector);
+        keybind.setKeybinding("pressed G","testAction");
+        keybind.setKeybinding("SPACE","pause");
+
         // Initialise the main canvas
         AppCanvas mainCanvas = new AppCanvas();
-
-        // Add the main canvas to the application window
         mainWindow.add(mainCanvas);
 
         // Initialise the menuPanel
@@ -85,7 +90,7 @@ public class Main
 
         Wave.setVisualiser(mainPanel.visualiser);
         Wave.setMidiPlayer(midiPlayer);
-        Wave.setMidiSequence("main/assets/midi-library/pattern 9.mid");
+        Wave.setMidiSequence("main/assets/midi-library/pattern 6.mid");
         Wave.loadMidiSequence();
         Wave.loadNoteActions();
 
@@ -94,7 +99,7 @@ public class Main
         double calc2 = Math.max(Wave.midiSequence.getBeatsPerMinute() / 120.0, 1.0);
         Wave.visualiser.keyboard.seekTick = (int) (1000.0 * calc1 * calc2);
 
-        Wave.playMidiSequence();
+        Wave.startMidiSequence();
         Wave.enableFeedback(false);
     }
 }

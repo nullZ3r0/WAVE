@@ -12,6 +12,7 @@
       <sourceFolder url="file://$MODULE_DIR$/main/ui-themes" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/main/window-themes" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/main/midi-playback" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/main/keybinds-framework" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -68,12 +68,13 @@ class PianoAction
     }
 }
 
-public class MidiSequence extends Thread
+public class MidiSequence implements Runnable
 {
     private File midiFile;
     private Sequence sequence;
-    public Boolean pause = false;
     private Boolean running = false;
+    private Boolean pause = false;
+    private Boolean done = false;
     private Boolean overrideTempo = false;
     private int tempo = 500000;
     private int tempoOverride = 500000;
@@ -365,20 +366,26 @@ public class MidiSequence extends Thread
     @Override
     public void run()
     {
-        if (!this.running)
+        this.running = true;
+        this.done = false;
+        try
         {
-            this.running = true;
-            try
+            long startDelay = -1024;
+            currentTick = startDelay;
+
+            if (overrideTempo)
             {
-                long startDelay = -1024;
+                setTempo(tempoOverride);
+                System.out.println(this.tickDuration);
+            }
 
-                if (overrideTempo)
+            while (this.running)
+            {
+                if (this.pause || this.done)
                 {
-                    setTempo(tempoOverride);
-                    System.out.println(this.tickDuration);
+                    Thread.sleep(1);
                 }
-
-                for (currentTick = startDelay; currentTick <= duration; currentTick++)
+                else
                 {
                     Wave.tickUpdate(currentTick);
                     ArrayList<PianoAction> pianoEvent = pianoEvents.get(currentTick);
@@ -418,13 +425,60 @@ public class MidiSequence extends Thread
                     }
                     while(start + INTERVAL >= end);
 
+                    currentTick++;
+                    if (currentTick > duration)
+                    {
+                        this.done = true;
+                    }
                 }
             }
-            catch (InterruptedException e)
-            {
-                System.out.println("MidiSequence was interrupted!");
-            }
-            this.running = false;
         }
+        catch (InterruptedException e)
+        {
+            System.out.println("MidiSequence was interrupted!");
+        }
+    }
+
+    public void pause()
+    {
+        if (this.running)
+        {
+            this.pause = true;
+        }
+    }
+
+    public void play()
+    {
+        if (this.running)
+        {
+            this.pause = false;
+        }
+        else
+        {
+            this.pause = false;
+            this.run();
+        }
+    }
+
+    public void restart()
+    {
+        this.currentTick = -1024;
+        this.done = false;
+        this.pause = false;
+    }
+
+    public boolean isRunning()
+    {
+        return this.running;
+    }
+
+    public boolean isPlaying()
+    {
+        return !this.pause;
+    }
+
+    public boolean isDone()
+    {
+        return this.done;
     }
 }
