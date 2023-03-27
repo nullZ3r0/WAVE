@@ -1,8 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.util.HashMap;
 
 /*
 Basic system
@@ -26,7 +24,7 @@ public class Keybind
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            WaveAPI.debugAction(this.actionName);
+            WaveAPI.fireAction(this.actionName);
         }
     }
     public AppFrame swingConnector;

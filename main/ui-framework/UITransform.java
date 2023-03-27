@@ -1,3 +1,4 @@
+import javax.xml.crypto.dsig.Transform;
 import java.util.ArrayList;
 
 public class UITransform
@@ -19,10 +20,20 @@ public class UITransform
         setSize(100, 100, 0, 0);
     }
 
+    UITransform(int _x, int _y, double _xScale, double _yScale)
+    {
+        setSize(_x, _y, _xScale, _yScale);
+    }
+
     /** Setters **/
     public void setSize(int _x, int _y, double _xScale, double _yScale)
     {
         size.set(_x, _y, _xScale, _yScale);
+    }
+
+    public void setSize(UITransform uiTransform)
+    {
+        this.setSize(uiTransform.size.getX(), uiTransform.size.getY(), uiTransform.size.getXScale(), uiTransform.size.getYScale());
     }
     public void setPosition(int _x, int _y, double _xScale, double _yScale)
     {

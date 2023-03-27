@@ -1,12 +1,6 @@
 import com.formdev.flatlaf.FlatLaf;
-
 import javax.swing.*;
-import javax.swing.plaf.ColorUIResource;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.Collections;
-import java.util.HashMap;
 
 public class Main
 {
@@ -57,6 +51,7 @@ public class Main
         keybind.setKeybinding("SPACE","togglePlay");
         keybind.setKeybinding("UP","increaseSpeed");
         keybind.setKeybinding("DOWN","decreaseSpeed");
+        keybind.setKeybinding("pressed R","restart");
 
         // Zoom keybindings
         keybind.setKeybinding("ADD","zoomIn");
@@ -106,15 +101,8 @@ public class Main
         Wave.setVisualiser(mainPanel.visualiser);
         Wave.setMidiPlayer(midiPlayer);
         Wave.setMidiSequence("main/assets/midi-library/pattern 9.mid");
-        Wave.loadMidiSequence();
         Wave.loadNoteActions();
-
-        // Rough plan for Keyboard.autoSetSeek()
-        double calc1 = Math.sqrt((double) Wave.midiSequence.getPPQ() / 32.0);
-        double calc2 = Math.max(Wave.midiSequence.getBeatsPerMinute() / 120.0, 1.0);
-        Wave.visualiser.keyboard.setSeekTick((long) (1000.0 * calc1 * calc2));
-
         Wave.startMidiSequence();
-        Wave.enableFeedback(false);
+        Wave.enableFeedback(true);
     }
 }

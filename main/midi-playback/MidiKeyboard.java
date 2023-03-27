@@ -80,6 +80,14 @@ class MidiKeyboard
         }
     }
 
+    public void repaintVisualiser()
+    {
+        if (this.visualiser != null)
+        {
+            this.visualiser.repaint();
+        }
+    }
+
     public void changeKeyPressed(PianoAction pianoAction)
     {
         this.keys[pianoAction.midiValue].isPressed = pianoAction.isPressed;
@@ -89,10 +97,7 @@ class MidiKeyboard
         // Only request a repaint if note is visible
         if (pianoAction.midiValue >= this.rootKeyValue && pianoAction.midiValue <= this.getTail())
         {
-            if (this.visualiser != null)
-            {
-                this.visualiser.repaint();
-            }
+            this.repaintVisualiser();
         }
     }
 
@@ -125,10 +130,7 @@ class MidiKeyboard
     public void setTickCurrent(long tick)
     {
         tickCurrent = tick;
-        if (this.visualiser != null)
-        {
-            this.visualiser.repaint();
-        }
+        this.repaintVisualiser();
     }
 
     /** Getters & Setters **/
@@ -148,6 +150,7 @@ class MidiKeyboard
     private void addSeekMultiplier(int value)
     {
         this.seekMultiplier += value;
+        this.repaintVisualiser();
     }
     public void zoomIn()
     {

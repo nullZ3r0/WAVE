@@ -32,27 +32,46 @@ public class menuPanel
         WaveGraphics.addChild(self, leftContainer);
 
         // Initialise buttons to add
-        resumeButton = new AppButton("Resume Practice");
-        resumeButton.transform.setSize(-48, 32, 1, 0);
+        UITransform defaultSize = new UITransform(-48, 32, 1, 0);
+        resumeButton = new AppButton("Resume Session");
+        resumeButton.transform.setSize(defaultSize);
 
         // This is what we want the button to do when clicked, however we're going to try link this action in main
         //resumeButton.addActionListener(e -> WaveAPI.hideMenu());
 
+        AppButton newSessionButton = new AppButton("New Session");
+        newSessionButton.transform.setSize(defaultSize);
+        newSessionButton.addActionListener(e -> WaveAPI.fireAction("openFileChooser"));
+
+        AppButton displaySettingsButton = new AppButton("Display Settings");
+        displaySettingsButton.transform.setSize(defaultSize);
+        displaySettingsButton.addActionListener(e -> WaveAPI.debugButton());
+
+        AppButton deviceSettingsButton = new AppButton("Device Settings");
+        deviceSettingsButton.transform.setSize(defaultSize);
+        deviceSettingsButton.addActionListener(e -> WaveAPI.debugButton());
+
         AppButton button2 = new AppButton("Credits");
-        button2.transform.setSize(-48, 32, 1, 0);
+        button2.transform.setSize(defaultSize);
         button2.addActionListener(e -> WaveAPI.switchToCredits());
 
         WaveGraphics.addChild(leftContainer, resumeButton);
+        WaveGraphics.addChild(leftContainer, newSessionButton);
+        WaveGraphics.addChild(leftContainer, displaySettingsButton);
+        WaveGraphics.addChild(leftContainer, deviceSettingsButton);
         WaveGraphics.addChild(leftContainer, button2);
 
+        /*
         // Initialise dummy buttons
-        for (int i = 0; i < 9; i++)
+        for (int i = 0; i < 5; i++)
         {
             AppButton dummyButton = new AppButton("Button " + String.valueOf(i + 1));
             dummyButton.transform.setSize(-48, 32, 1, 0);
             dummyButton.addActionListener(e -> WaveAPI.debugButton());
             WaveGraphics.addChild(leftContainer, dummyButton);
         }
+
+         */
 
 
         // Create dividerContainer

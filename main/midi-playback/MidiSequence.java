@@ -92,16 +92,24 @@ public class MidiSequence implements Runnable
     MidiSequence(File midiFile)
     {
         this.setMidiFile(midiFile);
-        this.loadMidiFile();
     }
 
     public void setMidiFile(File midiFile)
     {
         try
         {
+            this.duration = 0;
+            this.tickMultiplier = 100;
+            this.pause = true;
+            this.done = false;
             this.midiFile = midiFile;
             // Accessing the MIDI file data using SEQUENCE class
             this.sequence = MidiSystem.getSequence(this.midiFile);
+            this.loadMidiFile();
+
+            this.currentTick = -this.getTickPerBar();
+            Wave.tickUpdate(this.currentTick);
+            Wave.beatsPerMinuteUpdate(this.beatsPerMinute);
         }
         catch (InvalidMidiDataException e)
         {
@@ -112,6 +120,8 @@ public class MidiSequence implements Runnable
         }
         catch (IOException e)
         {
+            this.midiFile = null;
+            this.sequence = null;
             throw new RuntimeException(e);
         }
     }
@@ -125,7 +135,7 @@ public class MidiSequence implements Runnable
 
     private void addPianoAction(long tick, PianoAction action)
     {
-        duration = Math.max(duration, tick);
+        duration = Math.max(duration, tick) + 16;
 
         ArrayList<PianoAction> event = pianoEvents.get(tick);
         if (event == null)
@@ -158,8 +168,17 @@ public class MidiSequence implements Runnable
         return this.beatsPerMinute;
     }
 
-    public void loadMidiFile()
+    private boolean loadMidiFile()
     {
+        if (this.midiFile == null || this.sequence == null)
+        {
+            return false;
+        }
+
+        this.noteActions.clear();
+        this.pianoEvents.clear();
+        this.tempoEvents.clear();
+
         // Variable to show the number of tracks in the MIDI file
         int trackNumber = 0;
 
@@ -220,6 +239,7 @@ public class MidiSequence implements Runnable
             }
         }
 
+        return true;
     }
 
     public ArrayList<PianoAction> getNoteActions()
@@ -347,7 +367,7 @@ public class MidiSequence implements Runnable
 
     public long getTickPerBar()
     {
-        return (long) (this.PPQ * this.beatsPerBar);
+        return (long) ((double) this.PPQ * this.beatsPerBar);
     }
 
     @Override
@@ -355,12 +375,9 @@ public class MidiSequence implements Runnable
     {
         this.running = true;
         this.done = false;
-        this.pause = false;
+        this.pause = true;
         try
         {
-            long startDelay = -1024;
-            currentTick = startDelay;
-
             while (this.running)
             {
                 if (this.pause || this.done)
@@ -406,10 +423,11 @@ public class MidiSequence implements Runnable
                     }
                     while(start + INTERVAL >= end);
 
-                    currentTick++;
-                    if (currentTick > duration)
+                    this.currentTick++;
+                    if (this.currentTick > this.duration)
                     {
                         this.done = true;
+                        Wave.refreshKeyboards();
                     }
                 }
             }
@@ -438,9 +456,11 @@ public class MidiSequence implements Runnable
 
     public void restart()
     {
-        this.currentTick = -1024;
+        currentTick = -this.getTickPerBar();
         this.done = false;
-        this.pause = false;
+        this.pause = true;
+        Wave.refreshKeyboards();
+        Wave.tickUpdate(currentTick);
     }
 
     public void end()
