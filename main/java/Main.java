@@ -22,6 +22,7 @@ public class Main
     public static void main(String[] args)
     {
         System.out.println("Starting WAVE!");
+        //System.setProperty("sun.java2d.opengl", "True");
         setupWindowTheme();
 
         // Midi testing
@@ -84,6 +85,7 @@ public class Main
         customRenderer.start();
 
         // Setup some other stuff
+        System.setProperty("sun.java2d.opengl", "True");
         MidiPlayer midiPlayer = new MidiPlayer();
 
         MidiInputReceiver testReceiver = midiConnector.findReceiver("Wave MIDI Experiment");
