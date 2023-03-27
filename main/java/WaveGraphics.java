@@ -117,6 +117,7 @@ public class WaveGraphics extends Thread
     {
         if (pianoAction.isWhite)
         {
+            // Draw the white key
             if (pianoAction.isPlaying)
             {
                 graphics.setColor(AppTheme.visualiser.keyPlaying);
@@ -339,7 +340,7 @@ public class WaveGraphics extends Thread
             int keyboardX = keyboard.getBufferWidth();
             int playbackHeight = height - keyboardHeight;
             long tickCurrent = keyboard.tickCurrent;
-            long seekTick = keyboard.seekTick;
+            long seekTick = keyboard.getSeekTick();
 
             // Get keyboard colour info
             Color boardBackground = AppTheme.visualiser.boardBackground;
@@ -444,6 +445,31 @@ public class WaveGraphics extends Thread
                     drawPianoKey(graphics, blackKeyBounds, pianoAction, tickCurrent);
                 }
             }
+
+            // Draw information
+            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            graphics.setColor(AppTheme.fadeColor(AppTheme.visualiser.boardBackground, 0));
+
+            int infoWidth = 128;
+            graphics.fillRoundRect(8, 8, infoWidth * 3, 24, 16, 16);
+            graphics.fillRoundRect(8, 12 + 24, infoWidth, 24, 16, 16);
+            graphics.fillRoundRect(-8 + width - infoWidth, 8, infoWidth, 24, 16, 16);
+            graphics.fillRoundRect(-8 + width - infoWidth, 12 + 24, infoWidth, 24, 16, 16);
+
+            graphics.setColor(AppTheme.fadeColor(AppTheme.visualiser.foreground, 0));
+            graphics.setFont(AppTheme.titleFont.deriveFont(Font.PLAIN, 14F));
+            FontMetrics fontMetrics = graphics.getFontMetrics(AppTheme.titleFont.deriveFont(Font.PLAIN, 14F));
+
+            String arrangement = "Arrangement: " + visualiser.infoMidiFileName;
+            String arrangementBPM = "BPM: " + visualiser.infoMidiFileBPM;
+            String arrangementZoom = "Zoom: " + keyboard.getZoom() + "%";
+            String arrangementSpeed = "Speed: " + visualiser.infoMidiFileSpeed + "%";
+
+            graphics.drawString(arrangement, 16, 24 + 1);
+            graphics.drawString(arrangementBPM, 16, 52 + 1);
+
+            graphics.drawString(arrangementZoom, width - 16 - fontMetrics.stringWidth(arrangementZoom), 24 + 1);
+            graphics.drawString(arrangementSpeed, width - 16 - fontMetrics.stringWidth(arrangementSpeed), 52 + 1);
         }
     }
 

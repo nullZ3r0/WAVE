@@ -5,10 +5,27 @@ public class WaveAPI
 {
     public static void debugAction(String actionName)
     {
-        System.out.println("Debug action: " + actionName);
-        if (actionName.matches("pause"))
+        switch (actionName)
         {
-            Wave.togglePlayMidiSequence();
+            case "togglePlay":
+                Wave.togglePlayMidiSequence();
+                break;
+            case "increaseSpeed":
+                Wave.increaseMidiSequenceSpeed();
+                break;
+            case "decreaseSpeed":
+                Wave.decreaseMidiSequenceSpeed();
+                break;
+            case "zoomIn":
+                Wave.zoomInVisualiser();
+                break;
+            case "zoomOut":
+                Wave.zoomOutVisualiser();
+                break;
+            case "toggleMenu":
+                WaveAPI.nextCard(Main.mainCanvas);
+                Wave.pauseMidiSequence();
+                break;
         }
     }
     public static void showCard(Container container, String name)

@@ -7,7 +7,8 @@ class MidiKeyboard
     public int keysVisible = 88;
     public long tickCurrent = 0;
     public long tickPerBar = 256;
-    public long seekTick = 1000;
+    private long seekTick = 1000;
+    private int seekMultiplier = 100;
 
     /** Keyboard Private Attributes **/
     private boolean useAutoDimensions = false;
@@ -114,7 +115,7 @@ class MidiKeyboard
     {
         long currentPosition = noteAction.tickStart - this.tickCurrent;
 
-        if (noteAction.midiValue >= this.rootKeyValue && noteAction.midiValue <= this.getTail() && currentPosition <= this.seekTick && currentPosition + noteAction.tickDuration >= 0 )
+        if (noteAction.midiValue >= this.rootKeyValue && noteAction.midiValue <= this.getTail() && currentPosition <= this.getSeekTick() && currentPosition + noteAction.tickDuration >= 0 )
         {
             return true;
         }
@@ -144,6 +145,31 @@ class MidiKeyboard
         return count;
     }
 
+    private void addSeekMultiplier(int value)
+    {
+        this.seekMultiplier += value;
+    }
+    public void zoomIn()
+    {
+        if (this.seekMultiplier < 200)
+        {
+            addSeekMultiplier(10);
+        }
+    }
+
+    public void zoomOut()
+    {
+        if (this.seekMultiplier > 50)
+        {
+            addSeekMultiplier(-10);
+        }
+    }
+
+    public long getSeekTick()
+    {
+        return (long) ((double) seekTick * (100.0 / (double) this.seekMultiplier)) ;
+    }
+
     public int getTail()
     {
         return this.rootKeyValue + this.keysVisible;
@@ -171,5 +197,14 @@ class MidiKeyboard
     public ArrayList<PianoAction> getNoteActions()
     {
         return this.noteActions;
+    }
+
+    public void setSeekTick(long seekTick)
+    {
+        this.seekTick = seekTick;
+    }
+    public int getZoom()
+    {
+        return this.seekMultiplier;
     }
 }

@@ -1,4 +1,5 @@
 import java.io.File;
+import java.text.DecimalFormat;
 
 public class Wave implements Runnable
 {
@@ -6,6 +7,7 @@ public class Wave implements Runnable
     public static MidiPlayer midiPlayer;
     public static MidiInputReceiver midiInputReceiver;
     public static MidiSequence midiSequence;
+    private static Thread midiSequenceThread;
     public static MidiKeyboard playerKeyboard = new MidiKeyboard();
     public static MidiKeyboard midiKeyboard = new MidiKeyboard();
     private static long tickAcceptance = 8;
@@ -100,7 +102,7 @@ public class Wave implements Runnable
     {
         if (midiSequence != null)
         {
-            midiSequence.load();
+            midiSequence.loadMidiFile();
             if (visualiser != null)
             {
                 visualiser.keyboard.tickPerBar = midiSequence.getTickPerBar();
@@ -110,9 +112,15 @@ public class Wave implements Runnable
 
     public static void startMidiSequence()
     {
-        if (midiSequence != null)
+        if (midiSequenceExists())
         {
-            midiSequence.play();
+            if (midiSequenceThreadExists())
+            {
+                midiSequence.end();
+                midiSequenceThread = null;
+            }
+            midiSequenceThread = new Thread(midiSequence);
+            midiSequenceThread.start();
         }
     }
 
@@ -140,19 +148,72 @@ public class Wave implements Runnable
             }
         }
     }
-    public static void playMidiSequence()
-    {
-        if (midiSequence != null)
-        {
-            //midiSequence.pause();
-        }
-    }
+
     public static void pauseMidiSequence()
     {
-        if (midiSequence != null)
+        if (midiSequenceExists() && midiSequence.isRunning())
         {
-            //midiSequence.resume();
+            midiSequence.pause();
         }
+    }
+
+    public static void increaseMidiSequenceSpeed()
+    {
+        if (midiSequenceExists())
+        {
+            midiSequence.increaseSpeed();
+            if (visualiserExists())
+            {
+                visualiser.infoMidiFileSpeed = String.valueOf(midiSequence.getSpeedMultiplier());
+            }
+        }
+    }
+
+    public static void decreaseMidiSequenceSpeed()
+    {
+        if (midiSequenceExists())
+        {
+            midiSequence.decreaseSpeed();
+            if (visualiserExists())
+            {
+                visualiser.infoMidiFileSpeed = String.valueOf(midiSequence.getSpeedMultiplier());
+            }
+        }
+    }
+
+    public static void zoomInVisualiser()
+    {
+        if (visualiserExists())
+        {
+            visualiser.keyboard.zoomIn();
+        }
+    }
+
+    public static void zoomOutVisualiser()
+    {
+        if (visualiserExists())
+        {
+            visualiser.keyboard.zoomOut();
+        }
+    }
+
+    public static boolean midiSequenceExists()
+    {
+        return midiSequence != null;
+    }
+
+    public static boolean midiSequenceThreadExists()
+    {
+        return midiSequenceThread != null;
+    }
+
+    public static boolean visualiserExists()
+    {
+        if (visualiser != null)
+        {
+            return true;
+        }
+        return false;
     }
 
     public static void tickUpdate(long tick)
@@ -162,6 +223,15 @@ public class Wave implements Runnable
         if (visualiser != null)
         {
             visualiser.keyboard.setTickCurrent(tick);
+        }
+    }
+
+    public static void beatsPerMinuteUpdate(double beatsPerMinute)
+    {
+        if (visualiserExists())
+        {
+            DecimalFormat df = new DecimalFormat("###");
+            visualiser.infoMidiFileBPM = df.format(beatsPerMinute);
         }
     }
 
@@ -192,21 +262,21 @@ public class Wave implements Runnable
             midiSequence = null;
         }
         midiSequence = new MidiSequence(midiFile);
+
+        if (visualiserExists())
+        {
+            visualiser.infoMidiFileName = midiFile.getName();
+        }
     }
     public static void setMidiSequence(String filePath)
     {
         File midiFile = new File(filePath);
-        if (midiSequence != null)
-        {
-            // Do some stuff first
-            midiSequence = null;
-        }
-        midiSequence = new MidiSequence(midiFile);
+        setMidiSequence(midiFile);
     }
 
     public static void enableFeedback(boolean enable)
     {
-        if (visualiser != null)
+        if (visualiserExists())
         {
             enableFeedback = enable;
             for (PianoAction pianoAction : visualiser.keyboard.getKeys())

@@ -7,6 +7,10 @@ public class AppVisualiser extends JPanel
     /** Public AppVisualiser Attributes **/
     public UITransform transform;
     public MidiKeyboard keyboard;
+    public String infoMidiFileName = "Unknown";
+    public String infoMidiFileBPM = "000";
+    public String infoMidiFileSpeed = "100";
+    public String infoKeyboardZoom = "100";
 
     /** Private AppVisualiser Attributes **/
     private Component parent;

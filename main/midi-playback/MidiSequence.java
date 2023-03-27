@@ -75,13 +75,12 @@ public class MidiSequence implements Runnable
     private Boolean running = false;
     private Boolean pause = false;
     private Boolean done = false;
-    private Boolean overrideTempo = false;
     private int tempo = 500000;
-    private int tempoOverride = 500000;
     private int PPQ = 96; // How many ticks are in a beat
     private double beatsPerMinute = 120; // 120 BPM is the same as a tempo value of 500,000 microseconds per quarter note
     private double beatsPerBar = 4;
     private double tickDuration = 5; // In milliseconds
+    private int tickMultiplier = 100;
     private long currentTick = -512;
     private long duration = 0;
     private HashMap<Long, ArrayList<PianoAction>> pianoEvents = new HashMap<Long, ArrayList<PianoAction>>();
@@ -91,6 +90,12 @@ public class MidiSequence implements Runnable
     public ArrayList<PianoAction> noteActions = new ArrayList<PianoAction>();
 
     MidiSequence(File midiFile)
+    {
+        this.setMidiFile(midiFile);
+        this.loadMidiFile();
+    }
+
+    public void setMidiFile(File midiFile)
     {
         try
         {
@@ -116,13 +121,6 @@ public class MidiSequence implements Runnable
         this.tempo = set;
         this.beatsPerMinute = Math.round(60000000.0 / (double) this.tempo);
         this.tickDuration = 60000.0 / (this.beatsPerMinute * (double) this.PPQ);
-    }
-
-    public void setBeatsPerMinute(double set)
-    {
-        this.tempo = (int) Math.round(set / 0.00012);
-        this.beatsPerMinute = this.tempo * 0.00012;
-        this.tickDuration = 60000 / (this.beatsPerMinute * this.sequence.getResolution());
     }
 
     private void addPianoAction(long tick, PianoAction action)
@@ -160,7 +158,7 @@ public class MidiSequence implements Runnable
         return this.beatsPerMinute;
     }
 
-    public void load()
+    public void loadMidiFile()
     {
         // Variable to show the number of tracks in the MIDI file
         int trackNumber = 0;
@@ -352,32 +350,16 @@ public class MidiSequence implements Runnable
         return (long) (this.PPQ * this.beatsPerBar);
     }
 
-    public void overrideTempo(boolean overrideTempo, int BPM)
-    {
-        this.overrideTempo = overrideTempo;
-        if (overrideTempo)
-        {
-            int newTempo = (int) Math.round(60000000.0 / (double) BPM);
-            System.out.println(newTempo);
-            tempoOverride = newTempo;
-        }
-    }
-
     @Override
     public void run()
     {
         this.running = true;
         this.done = false;
+        this.pause = false;
         try
         {
             long startDelay = -1024;
             currentTick = startDelay;
-
-            if (overrideTempo)
-            {
-                setTempo(tempoOverride);
-                System.out.println(this.tickDuration);
-            }
 
             while (this.running)
             {
@@ -398,20 +380,19 @@ public class MidiSequence implements Runnable
                         }
                     }
 
-                    if (!overrideTempo)
+                    ArrayList<TempoAction> tempoEvent = tempoEvents.get(currentTick);
+                    if (tempoEvent != null)
                     {
-                        ArrayList<TempoAction> tempoEvent = tempoEvents.get(currentTick);
-                        if (tempoEvent != null)
+                        for (TempoAction tempoAction : tempoEvent)
                         {
-                            for (TempoAction tempoAction : tempoEvent)
-                            {
-                                this.setTempo(tempoAction.midiValue);
-                            }
+                            this.setTempo(tempoAction.midiValue);
+                            Wave.beatsPerMinuteUpdate(this.beatsPerMinute);
                         }
                     }
 
                     DecimalFormat df = new DecimalFormat("##.000000");
-                    long ns = Long.valueOf(df.format(this.tickDuration).replace(".",""));
+                    double calculatedTick = this.tickDuration * (100.0 / (double) this.tickMultiplier);
+                    long ns = Long.valueOf(df.format(calculatedTick).replace(".",""));
                     Thread.sleep(0);
                     // This allows us to wait for a much more accurate amount of time
                     // Very important when dealing with music
@@ -453,11 +434,6 @@ public class MidiSequence implements Runnable
         {
             this.pause = false;
         }
-        else
-        {
-            this.pause = false;
-            this.run();
-        }
     }
 
     public void restart()
@@ -465,6 +441,11 @@ public class MidiSequence implements Runnable
         this.currentTick = -1024;
         this.done = false;
         this.pause = false;
+    }
+
+    public void end()
+    {
+        this.running = false;
     }
 
     public boolean isRunning()
@@ -481,4 +462,29 @@ public class MidiSequence implements Runnable
     {
         return this.done;
     }
+
+    private void addTickMultiplier(int value)
+    {
+        this.tickMultiplier += value;
+    }
+    public void increaseSpeed()
+    {
+        if (this.tickMultiplier < 300)
+        {
+            addTickMultiplier(10);
+        }
+    }
+
+    public void decreaseSpeed()
+    {
+        if (this.tickMultiplier > 20)
+        {
+            addTickMultiplier(-10);
+        }
+    }
+
+    public int getSpeedMultiplier()
+{
+    return this.tickMultiplier;
+}
 }

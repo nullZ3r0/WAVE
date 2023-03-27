@@ -60,13 +60,13 @@ public class Keybind
         // Check if the keyName is valid
         if (keyStroke != null)
         {
-            System.out.println("Binding ["+keyStroke.toString()+"] to ["+actionName+"]");
-            this.swingConnector.getInputMap().put(keyStroke, actionName);
+            //System.out.println("Binding ["+keyStroke.toString()+"] to ["+actionName+"]");
+            this.swingConnector.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, actionName);
 
             Action keybindAction = this.swingConnector.getActionMap().get(actionName);
             if (keybindAction == null)
             {
-                System.out.println("["+actionName+"] doesn't exists, creating...");
+                //System.out.println("["+actionName+"] doesn't exists, creating...");
                 this.swingConnector.getActionMap().put(actionName, new KeybindAction(actionName));
             }
             return true;
