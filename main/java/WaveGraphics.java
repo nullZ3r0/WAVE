@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
@@ -471,6 +472,17 @@ public class WaveGraphics extends Thread
             graphics.drawString(arrangementZoom, width - 16 - fontMetrics.stringWidth(arrangementZoom), 24 + 1);
             graphics.drawString(arrangementSpeed, width - 16 - fontMetrics.stringWidth(arrangementSpeed), 52 + 1);
         }
+
+        else if (object.getClass() == AppLabel.class)
+        {
+
+        }
+
+        else if(object.getClass().isAssignableFrom(JComponent.class))
+        {
+            JComponent jObject = (JComponent) object;
+            jObject.paint(graphics);
+        }
     }
 
     // Object stuff
@@ -503,6 +515,12 @@ public class WaveGraphics extends Thread
             AppVisualiser childVisualiser = (AppVisualiser) child;
             childVisualiser.useWaveGraphics(true);
             childVisualiser.useTransform(true);
+        }
+        else if (child.getClass() == AppLabel.class)
+        {
+            AppLabel childLabel = (AppLabel) child;
+            childLabel.useWaveGraphics(true);
+            childLabel.useTransform(true);
         }
     }
 

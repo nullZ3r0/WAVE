@@ -74,6 +74,10 @@ public class Main
         // Test manipulating exposed elements
         menuPanel.resumeButton.addActionListener(e -> WaveAPI.showCard(mainCanvas,"mainPanel"));
 
+        // creditsPanel
+        creditsPanel creditsPanel = new creditsPanel();
+        //WaveGraphics.addChild(menuPanel.rightContainer, creditsPanel.self);
+
         // Initialise the mainPanel
         mainPanel mainPanel = new mainPanel();
 

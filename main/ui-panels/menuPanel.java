@@ -8,6 +8,7 @@ public class menuPanel
     // You can expose elements of the panel, this allows them to be accessed by other classes (most importantly main)
     // Example below
     public AppButton resumeButton;
+    public AppFrame rightContainer;
 
     menuPanel()
     {
@@ -95,11 +96,16 @@ public class menuPanel
 
 
         // Create rightContainer
-        AppFrame rightContainer = new AppFrame();
-        rightContainer.setLayout(new CardLayout());
+        rightContainer = new AppFrame();
+        // CardLayout is bugged with WaveGraphics!!!
+        //rightContainer.setLayout(new CardLayout());
         rightContainer.setBackground(AppTheme.backgroundDark1);
         rightContainer.transform.setCornerRadius(8);
         rightContainer.transform.setSize(600, -100, 0, 1);
+
+        AppFrame test = new AppFrame();
+        test.setBackground(AppTheme.error);
+        WaveGraphics.addChild(rightContainer, test);
 
         // Set rightContainer parent
         WaveGraphics.addChild(self, rightContainer);
