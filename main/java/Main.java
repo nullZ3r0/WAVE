@@ -4,7 +4,10 @@ import java.awt.*;
 
 public class Main
 {
+    public static MidiConnector midiConnector;
     public static AppCanvas mainCanvas;
+    public static mainPanel mainPanel;
+    public static menuPanel menuPanel;
 
     private static void setupWindowTheme()
     {
@@ -22,11 +25,12 @@ public class Main
     public static void main(String[] args)
     {
         System.out.println("Starting WAVE!");
-        //System.setProperty("sun.java2d.opengl", "True");
+        System.setProperty("sun.java2d.d3d", "True");
+        //System.setProperty("sun.java2d.accthreshold", "1");
         setupWindowTheme();
 
         // Midi testing
-        MidiConnector midiConnector = new MidiConnector();
+        midiConnector = new MidiConnector();
 
         // Initialise custom render thread
         WaveGraphics customRenderer = new WaveGraphics();
@@ -68,18 +72,21 @@ public class Main
         mainCanvas = new AppCanvas();
         mainWindow.add(mainCanvas);
 
-        // Initialise the menuPanel
-        menuPanel menuPanel = new menuPanel();
+        // Initialise the main panels
+        menuPanel = new menuPanel();
+        mainPanel = new mainPanel();
+
+        // Initialise the menuPanel child panels
+        deviceSettingsPanel deviceSettingsPanel = new deviceSettingsPanel(midiConnector);
+        menuPanel.deviceSettingsButton.addActionListener(e -> WaveAPI.showPanel(deviceSettingsPanel.self));
+        deviceSettingsPanel.refresh();
+        creditsPanel creditsPanel = new creditsPanel();
+        menuPanel.creditsButton.addActionListener(e -> WaveAPI.showPanel(creditsPanel.self));
+        WaveGraphics.addChild(menuPanel.rightContainer, deviceSettingsPanel.self);
+        WaveGraphics.addChild(menuPanel.rightContainer, creditsPanel.self);
 
         // Test manipulating exposed elements
-        menuPanel.resumeButton.addActionListener(e -> WaveAPI.showCard(mainCanvas,"mainPanel"));
-
-        // creditsPanel
-        creditsPanel creditsPanel = new creditsPanel();
-        //WaveGraphics.addChild(menuPanel.rightContainer, creditsPanel.self);
-
-        // Initialise the mainPanel
-        mainPanel mainPanel = new mainPanel();
+        menuPanel.resumeButton.addActionListener(e -> WaveAPI.showPanel(mainPanel.self));
 
         // Add the frames to the main AppCanvas
         mainCanvas.add(menuPanel.self, "menuPanel");
@@ -89,14 +96,13 @@ public class Main
         customRenderer.start();
 
         // Setup some other stuff
-        System.setProperty("sun.java2d.opengl", "True");
         MidiPlayer midiPlayer = new MidiPlayer();
 
         MidiInputReceiver testReceiver = midiConnector.findReceiver("Wave MIDI Experiment");
         if (testReceiver != null)
         {
             testReceiver.startListening();
-            //midiConnector.printReceivers();
+            midiConnector.printReceivers();
             Wave.setMidiInputReceiver(testReceiver);
         }
         else

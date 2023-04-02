@@ -13,6 +13,8 @@ public class AppLabel extends JLabel
         this.setBackground(AppTheme.frame.background);
         this.setOpaque(false);
         this.transform = new UITransform();
+        this.setFont(AppTheme.textFont.deriveFont(Font.PLAIN, 16));
+        this.setHorizontalAlignment(SwingConstants.CENTER);
     }
 
     public AppLabel(String text)

@@ -28,7 +28,14 @@ public class WaveAPI
                 Wave.zoomOutVisualiser();
                 break;
             case "toggleMenu":
-                WaveAPI.nextCard(Main.mainCanvas);
+                if (Main.mainPanel.self.isVisible())
+                {
+                    WaveAPI.showPanel(Main.menuPanel.self);
+                }
+                else
+                {
+                    WaveAPI.showPanel(Main.mainPanel.self);
+                }
                 Wave.pauseMidiSequence();
                 break;
             case "openFileChooser":
@@ -36,7 +43,7 @@ public class WaveAPI
                 if (midiFile != null)
                 {
                     Wave.setMidiSequence(midiFile);
-                    WaveAPI.nextCard(Main.mainCanvas);
+                    WaveAPI.showPanel(Main.mainPanel.self);
                 }
                 break;
         }
@@ -76,6 +83,20 @@ public class WaveAPI
         }
     }
 
+    public static void showPanel(AppFrame appFrame)
+    {
+        Container parent = appFrame.getParent();
+        if (parent != null)
+        {
+            Component[] children = parent.getComponents();
+            for (Component child : children)
+            {
+                child.setVisible(false);
+            }
+            appFrame.setVisible(true);
+        }
+    }
+
     public static void switchToCredits()
     {
         System.out.println("Test API: This show the creditsContainer on the menuPanel -> rightContainer");
@@ -98,5 +119,10 @@ public class WaveAPI
             container.revalidate();
             container.repaint();
         }
+    }
+
+    public static void exit()
+    {
+        System.exit(0);
     }
 }
