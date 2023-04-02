@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="WAVE:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/WAVE_jar</output-path>
+    <root id="archive" name="WAVE.jar">
+      <element id="module-output" name="WAVE" />
+      <element id="dir-copy" path="$PROJECT_DIR$/main/resources" />
+      <element id="library" level="project" name="formdev.flatlaf" />
+    </root>
+  </artifact>
+</component>

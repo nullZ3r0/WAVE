@@ -89,8 +89,6 @@ public class MidiConnector
 
     public void listenToReceiver(int index)
     {
-        System.out.println("Changing");
-
         if (index < this.receivers.size())
         {
             for (MidiInputReceiver receiver: this.receivers)

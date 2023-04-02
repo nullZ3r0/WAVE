@@ -25,8 +25,6 @@ public class Main
     public static void main(String[] args)
     {
         System.out.println("Starting WAVE!");
-        System.setProperty("sun.java2d.d3d", "True");
-        //System.setProperty("sun.java2d.accthreshold", "1");
         setupWindowTheme();
 
         // Midi testing
@@ -96,23 +94,12 @@ public class Main
         customRenderer.start();
 
         // Setup some other stuff
+        WaveAPI.showPanel(creditsPanel.self);
+
         MidiPlayer midiPlayer = new MidiPlayer();
-
-        MidiInputReceiver testReceiver = midiConnector.findReceiver("Wave MIDI Experiment");
-        if (testReceiver != null)
-        {
-            testReceiver.startListening();
-            midiConnector.printReceivers();
-            Wave.setMidiInputReceiver(testReceiver);
-        }
-        else
-        {
-            midiConnector.printReceivers();
-        }
-
         Wave.setVisualiser(mainPanel.visualiser);
         Wave.setMidiPlayer(midiPlayer);
-        Wave.setMidiSequence("main/assets/midi-library/pattern 9.mid");
+        Wave.setMidiSequence("main/resources/midi-library/pattern 9.mid");
         Wave.loadNoteActions();
         Wave.startMidiSequence();
         Wave.enableFeedback(true);

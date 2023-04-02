@@ -77,8 +77,8 @@ public class LaloTheme extends UITheme
         // Initialise custom fonts
         try
         {
-            Font nunitoExtraBold = Font.createFont(Font.TRUETYPE_FONT, new File("main/assets/fonts/Nunito-ExtraBold.ttf"));
-            Font nunitoRegular = Font.createFont(Font.TRUETYPE_FONT, new File("main/assets/fonts/Nunito-Regular.ttf"));
+            Font nunitoExtraBold = Font.createFont(Font.TRUETYPE_FONT, new File("main/resources/fonts/Nunito-ExtraBold.ttf"));
+            Font nunitoRegular = Font.createFont(Font.TRUETYPE_FONT, new File("main/resources/fonts/Nunito-Regular.ttf"));
 
             AppTheme.titleFont = nunitoExtraBold;
             AppTheme.textFont = nunitoRegular;

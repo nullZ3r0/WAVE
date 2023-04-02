@@ -125,7 +125,6 @@ public class AppTheme
     {
         fonts.put("error", new JLabel().getFont());
         UITheme StandardTheme = new StandardTheme();
-        UITheme LaloTheme = new LaloTheme();
         StandardTheme.apply();
     }
 }

@@ -82,6 +82,7 @@ public class WaveGraphics extends Thread
     {
         // Check if the component actually exists
         if (object == null) {return;}
+        if (!object.isVisible()) {return;}
 
         /** Update AppFrames **/
         if (object.getClass() == AppFrame.class)
@@ -285,6 +286,7 @@ public class WaveGraphics extends Thread
     {
         // Check if the component actually exists
         if (object == null) {return;}
+        if (!object.isVisible()) {return;}
 
         int width = object.getWidth();
         int height = object.getHeight();
@@ -567,8 +569,7 @@ public class WaveGraphics extends Thread
 
                 if (enableHighQuality)
                 {
-                    // Runs at a consistent 60fps using an expensive method
-                    Thread.sleep(0);
+                    // Runs at a consistent 60fps using an expensive method);
                     long start = System.nanoTime();
                     long end = 0;
                     do
@@ -580,16 +581,19 @@ public class WaveGraphics extends Thread
                 }
                 else
                 {
-                    // Runs at a consistent 30fps using Thread.sleep
-                    Thread.sleep(32); // Around (30 fps)
+                    try
+                    {
+                        // Runs at a consistent 30fps using Thread.sleep
+                        Thread.sleep(32); // Around (30 fps)
+                        //Thread.sleep(16); // Around (60 fps)
+                        //Thread.sleep(32); // Around (30 fps)
+                        //Thread.sleep(20); // Around (20 fps)
+                    }
+                    catch (InterruptedException e)
+                    {
+                        System.out.println("WaveGraphics was interrupted!");
+                    }
                 }
-                //Thread.sleep(16); // Around (60 fps)
-                //Thread.sleep(32); // Around (30 fps)
-                //Thread.sleep(20); // Around (20 fps)
-            }
-            catch (InterruptedException e)
-            {
-                System.out.println("WaveGraphics was interrupted!");
             }
             catch (ConcurrentModificationException e)
             {

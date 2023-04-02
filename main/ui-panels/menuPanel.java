@@ -46,6 +46,7 @@ public class menuPanel
 
         AppButton displaySettingsButton = new AppButton("Display Settings");
         displaySettingsButton.transform.setSize(defaultSize);
+        displaySettingsButton.setEnabled(false);
         displaySettingsButton.addActionListener(e -> WaveAPI.debugButton());
 
         deviceSettingsButton = new AppButton("Device Settings");
@@ -53,6 +54,7 @@ public class menuPanel
 
         keybindsButton = new AppButton("Keybinds");
         keybindsButton.transform.setSize(defaultSize);
+        keybindsButton.setEnabled(false);
         keybindsButton.addActionListener(e -> WaveAPI.debugButton());
 
         creditsButton = new AppButton("Credits");
