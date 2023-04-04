@@ -25,7 +25,7 @@ public class Main
     public static void main(String[] args)
     {
         System.out.println("Starting Sub Programs!");
-        File currentDir = new File(System.getProperty("user.dir"));**
+        File currentDir = new File(System.getProperty("user.dir"));
         String exePath = "main\\resources\\python\\pyhelper_voice.exe";
         File exeFile = new File(currentDir, exePath);
         System.out.println(exeFile.getAbsolutePath());
