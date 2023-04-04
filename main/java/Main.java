@@ -24,27 +24,19 @@ public class Main
 
     public static void main(String[] args)
     {
-        System.out.println("Starting Sub Programs!");
-        File currentDir = new File(System.getProperty("user.dir"));
-        String exePath = "main\\resources\\python\\pyhelper_voice.exe";
-        File exeFile = new File(currentDir, exePath);
-        System.out.println(exeFile.getAbsolutePath());
-        ProcessController.startProcess(exeFile.getAbsolutePath());
-        exePath = "main\\resources\\python\\pyhelper_gestures.exe";
-        exeFile = new File(currentDir, exePath);
-        System.out.println(exeFile.getAbsolutePath());
-        ProcessController.startProcess(exeFile.getAbsolutePath());
+        System.out.println("[i] Starting WAVE");
+        ProcessController.startDefaultProcesses(false);
 
         Runtime.getRuntime().addShutdownHook(new Thread()
         {
             public void run()
             {
                 // Cleanup code
+                System.out.println("[i] Stopping Sub Programs");
                 ProcessController.endAll();
+                System.out.println("[i] Closing WAVE");
             }
         });
-
-        System.out.println("Starting WAVE!");
         setupWindowTheme();
 
         // Midi testing

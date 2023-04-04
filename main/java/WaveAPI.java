@@ -53,7 +53,7 @@ public class WaveAPI
     {
         JFileChooser fileChooser = new JFileChooser();
 
-        fileChooser.setCurrentDirectory(new File("main/assets/midi-library"));
+        fileChooser.setCurrentDirectory(new File("main/resources/midi-library"));
         fileChooser.setAcceptAllFileFilterUsed(false);
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("*.mid", "mid"));
 
@@ -95,11 +95,6 @@ public class WaveAPI
             }
             appFrame.setVisible(true);
         }
-    }
-
-    public static void switchToCredits()
-    {
-        System.out.println("Test API: This show the creditsContainer on the menuPanel -> rightContainer");
     }
 
     public static void debugButton()
