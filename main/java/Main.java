@@ -1,6 +1,6 @@
-import com.formdev.flatlaf.FlatLaf;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 
 public class Main
 {
@@ -24,6 +24,20 @@ public class Main
 
     public static void main(String[] args)
     {
+        System.out.println("Starting Sub Programs!");
+        File currentDir = new File(System.getProperty("user.dir"));
+        String exePath = "main\\resources\\python\\HandGestures.exe";
+        File exeFile = new File(currentDir, exePath);
+        System.out.println(exeFile.getAbsolutePath());
+        ProgramController.startProcess(exeFile.getAbsolutePath());
+        /*
+        exePath = "main\\python\\HandGestures.exe";
+        exeFile = new File(currentDir, exePath);
+        System.out.println(exeFile.getAbsolutePath());
+        ProgramController.startProcess(exeFile.getAbsolutePath());
+
+         */
+
         System.out.println("Starting WAVE!");
         setupWindowTheme();
 

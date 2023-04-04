@@ -13,6 +13,8 @@
       <sourceFolder url="file://$MODULE_DIR$/main/midi-playback" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/main/keybinds-framework" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/main/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/main/program-controller" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/main/resources/python" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
