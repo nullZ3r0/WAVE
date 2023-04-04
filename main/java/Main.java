@@ -26,17 +26,23 @@ public class Main
     {
         System.out.println("Starting Sub Programs!");
         File currentDir = new File(System.getProperty("user.dir"));
-        String exePath = "main\\resources\\python\\HandGestures.exe";
+        String exePath = "main\\resources\\python\\pyhelper_voice.exe";
         File exeFile = new File(currentDir, exePath);
         System.out.println(exeFile.getAbsolutePath());
-        ProgramController.startProcess(exeFile.getAbsolutePath());
-        /*
-        exePath = "main\\python\\HandGestures.exe";
+        ProcessController.startProcess(exeFile.getAbsolutePath());
+        exePath = "main\\resources\\python\\pyhelper_gestures.exe";
         exeFile = new File(currentDir, exePath);
         System.out.println(exeFile.getAbsolutePath());
-        ProgramController.startProcess(exeFile.getAbsolutePath());
+        ProcessController.startProcess(exeFile.getAbsolutePath());
 
-         */
+        Runtime.getRuntime().addShutdownHook(new Thread()
+        {
+            public void run()
+            {
+                // Cleanup code
+                ProcessController.endAll();
+            }
+        });
 
         System.out.println("Starting WAVE!");
         setupWindowTheme();
