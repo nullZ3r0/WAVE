@@ -206,6 +206,15 @@ class MidiKeyboard
     {
         this.seekTick = seekTick;
     }
+    public void setKeysVisible(int keysVisible)
+    {
+        this.keysVisible = keysVisible;
+    }
+
+    public void setRootKeyValue(int rootKeyValue)
+    {
+        this.rootKeyValue = rootKeyValue;
+    }
     public int getZoom()
     {
         return this.seekMultiplier;

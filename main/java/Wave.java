@@ -13,6 +13,8 @@ public class Wave
     private static long tickAcceptance = 8;
     private static long tickCurrent = 0;
     private static boolean enableFeedback = true;
+    private static boolean voiceControlReady = false;
+    private static boolean gestureControlReady = false;
 
     /** Methods **/
     private static void applyFeedback(PianoAction pianoAction)
@@ -156,6 +158,14 @@ public class Wave
         if (midiSequenceExists() && midiSequence.isRunning())
         {
             midiSequence.pause();
+        }
+    }
+
+    public static void resumeMidiSequence()
+    {
+        if (midiSequenceExists() && midiSequence.isRunning())
+        {
+            midiSequence.play();
         }
     }
 

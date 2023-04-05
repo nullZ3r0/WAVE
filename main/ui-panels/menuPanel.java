@@ -5,9 +5,15 @@ public class menuPanel
 {
     public AppFrame self;
 
-    // You can expose elements of the panel, this allows them to be accessed by other classes (most importantly main)
+    // You can expose elements of the panel, this allows them to be accessed by other classes (most importantly Main)
     // Example below
     public AppButton resumeButton;
+    public AppButton deviceSettingsButton;
+    public AppButton displaySettingsButton;
+    public AppButton keybindsButton;
+    public AppButton creditsButton;
+    public AppFrame rightContainer;
+    public AppButton developerButton;
 
     menuPanel()
     {
@@ -36,43 +42,38 @@ public class menuPanel
         resumeButton = new AppButton("Resume Session");
         resumeButton.transform.setSize(defaultSize);
 
-        // This is what we want the button to do when clicked, however we're going to try link this action in main
-        //resumeButton.addActionListener(e -> WaveAPI.hideMenu());
-
         AppButton newSessionButton = new AppButton("New Session");
         newSessionButton.transform.setSize(defaultSize);
         newSessionButton.addActionListener(e -> WaveAPI.fireAction("openFileChooser"));
 
-        AppButton displaySettingsButton = new AppButton("Display Settings");
+        displaySettingsButton = new AppButton("Display Settings");
         displaySettingsButton.transform.setSize(defaultSize);
-        displaySettingsButton.addActionListener(e -> WaveAPI.debugButton());
 
-        AppButton deviceSettingsButton = new AppButton("Device Settings");
+        deviceSettingsButton = new AppButton("Device Settings");
         deviceSettingsButton.transform.setSize(defaultSize);
-        deviceSettingsButton.addActionListener(e -> WaveAPI.debugButton());
 
-        AppButton button2 = new AppButton("Credits");
-        button2.transform.setSize(defaultSize);
-        button2.addActionListener(e -> WaveAPI.switchToCredits());
+        keybindsButton = new AppButton("Keybinds");
+        keybindsButton.transform.setSize(defaultSize);
 
+        developerButton = new AppButton("Developer Panel");
+        developerButton.transform.setSize(defaultSize);
+
+        creditsButton = new AppButton("Credits");
+        creditsButton.transform.setSize(defaultSize);
+
+        AppButton exitButton = new AppButton("Exit");
+        exitButton.transform.setSize(defaultSize);
+        exitButton.addActionListener(e -> WaveAPI.exit());
+
+        // Add all the buttons the left container
         WaveGraphics.addChild(leftContainer, resumeButton);
         WaveGraphics.addChild(leftContainer, newSessionButton);
         WaveGraphics.addChild(leftContainer, displaySettingsButton);
         WaveGraphics.addChild(leftContainer, deviceSettingsButton);
-        WaveGraphics.addChild(leftContainer, button2);
-
-        /*
-        // Initialise dummy buttons
-        for (int i = 0; i < 5; i++)
-        {
-            AppButton dummyButton = new AppButton("Button " + String.valueOf(i + 1));
-            dummyButton.transform.setSize(-48, 32, 1, 0);
-            dummyButton.addActionListener(e -> WaveAPI.debugButton());
-            WaveGraphics.addChild(leftContainer, dummyButton);
-        }
-
-         */
-
+        WaveGraphics.addChild(leftContainer, keybindsButton);
+        WaveGraphics.addChild(leftContainer, developerButton);
+        WaveGraphics.addChild(leftContainer, creditsButton);
+        WaveGraphics.addChild(leftContainer, exitButton);
 
         // Create dividerContainer
         AppFrame dividerContainer = new AppFrame();
@@ -93,10 +94,9 @@ public class menuPanel
         // Set dividerContainer parent
         WaveGraphics.addChild(self, dividerContainer);
 
-
         // Create rightContainer
-        AppFrame rightContainer = new AppFrame();
-        rightContainer.setLayout(new CardLayout());
+        rightContainer = new AppFrame();
+        rightContainer.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
         rightContainer.setBackground(AppTheme.backgroundDark1);
         rightContainer.transform.setCornerRadius(8);
         rightContainer.transform.setSize(600, -100, 0, 1);

@@ -87,6 +87,19 @@ public class MidiConnector
         }
     }
 
+    public void listenToReceiver(int index)
+    {
+        if (index < this.receivers.size())
+        {
+            for (MidiInputReceiver receiver: this.receivers)
+            {
+                receiver.stopListening();
+            }
+
+            this.receivers.get(index).startListening();
+        }
+    }
+
     public void printReceivers()
     {
         // Attempt to refresh
@@ -123,6 +136,15 @@ public class MidiConnector
             }
         }
 
+        return null;
+    }
+
+    public MidiInputReceiver findReceiver(int index)
+    {
+        if (index < this.receivers.size())
+        {
+            return this.receivers.get(index);
+        }
         return null;
     }
 }

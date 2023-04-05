@@ -1,6 +1,5 @@
 import javax.sound.midi.*;
 
-// Imported class, look into it and learn
 public class MidiPlayer
 {
     // https://docs.oracle.com/javase/7/docs/api/javax/sound/midi/Synthesizer.html

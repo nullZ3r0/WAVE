@@ -7,6 +7,8 @@ public class StandardTheme extends UITheme
 {
     public void apply()
     {
+        ClassLoader classLoader = this.getClass().getClassLoader();
+
         AppTheme.name = "Default";
         AppTheme.backgroundLight3 = new Color(79, 82, 106);
         AppTheme.backgroundLight2 = new Color(68, 71, 91);
@@ -53,7 +55,7 @@ public class StandardTheme extends UITheme
         AppTheme.visualiser.octaveDividerLight1 = AppTheme.backgroundDark1;
         AppTheme.visualiser.octaveDivider = AppTheme.backgroundDark3;
         AppTheme.visualiser.keyPlaying = new Color(236, 151, 62);
-        AppTheme.visualiser.whiteNoteBackground = new Color(180, 155, 222);
+        AppTheme.visualiser.whiteNoteBackground = new Color(195, 160, 255);
         AppTheme.visualiser.whiteNoteForeground = AppTheme.darkenColor(AppTheme.visualiser.whiteNoteBackground, 0.333);
         AppTheme.visualiser.blackNoteBackground = AppTheme.darkenColor(AppTheme.visualiser.whiteNoteBackground, 0.666);
         AppTheme.visualiser.blackNoteForeground = AppTheme.darkenColor(AppTheme.visualiser.whiteNoteForeground, 0.666);
@@ -63,8 +65,8 @@ public class StandardTheme extends UITheme
         // Initialise custom fonts
         try
         {
-            Font nunitoExtraBold = Font.createFont(Font.TRUETYPE_FONT, new File("main/assets/fonts/Nunito-ExtraBold.ttf"));
-            Font nunitoRegular = Font.createFont(Font.TRUETYPE_FONT, new File("main/assets/fonts/Nunito-Regular.ttf"));
+            Font nunitoExtraBold = Font.createFont(Font.TRUETYPE_FONT, new File("main/resources/fonts/Nunito-ExtraBold.ttf"));
+            Font nunitoRegular = Font.createFont(Font.TRUETYPE_FONT, new File("main/resources/fonts/Nunito-Regular.ttf"));
 
             AppTheme.titleFont = nunitoExtraBold;
             AppTheme.textFont = nunitoRegular;

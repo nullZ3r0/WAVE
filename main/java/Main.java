@@ -1,10 +1,13 @@
-import com.formdev.flatlaf.FlatLaf;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 
 public class Main
 {
+    public static MidiConnector midiConnector;
     public static AppCanvas mainCanvas;
+    public static mainPanel mainPanel;
+    public static menuPanel menuPanel;
 
     private static void setupWindowTheme()
     {
@@ -21,12 +24,30 @@ public class Main
 
     public static void main(String[] args)
     {
-        System.out.println("Starting WAVE!");
-        //System.setProperty("sun.java2d.opengl", "True");
+        System.out.println("[i] Starting WAVE");
+
+        // Initialise UDPReceiver
+        UDPReceiver udpReceiver = new UDPReceiver(5005);
+        udpReceiver.start();
+
+        ProcessController.startDefaultProcesses(true);
+
+        Runtime.getRuntime().addShutdownHook(new Thread()
+        {
+            public void run()
+            {
+                // Cleanup code
+                System.out.println("[i] Stopping Sub Programs");
+                ProcessController.endAll();
+                ProcessController.defaultClean();
+                System.out.println("[i] Closing WAVE");
+                udpReceiver.stop();
+            }
+        });
         setupWindowTheme();
 
-        // Midi testing
-        MidiConnector midiConnector = new MidiConnector();
+        // Initialise Midi Connector
+        midiConnector = new MidiConnector();
 
         // Initialise custom render thread
         WaveGraphics customRenderer = new WaveGraphics();
@@ -39,8 +60,6 @@ public class Main
 
         // Initialise application window
         AppWindow mainWindow = new AppWindow();
-        //mainWindow.setExtendedState(mainWindow.getExtendedState() | JFrame.MAXIMIZED_BOTH);
-
         // DO NOT change this to be LOWER THAN 1000 x 600!
         mainWindow.setMinimumSize(new Dimension(1000, 600));
 
@@ -63,19 +82,47 @@ public class Main
         // Panel keybindings
         keybind.setKeybinding("ESCAPE","toggleMenu");
 
-
         // Initialise the main canvas
         mainCanvas = new AppCanvas();
         mainWindow.add(mainCanvas);
 
-        // Initialise the menuPanel
-        menuPanel menuPanel = new menuPanel();
+        // Initialise the main panels
+        menuPanel = new menuPanel();
+        mainPanel = new mainPanel();
+
+        // Initialise the menuPanel child panels
+        // Display Settings
+        displaySettingsPanel displaySettingsPanel = new displaySettingsPanel();
+        menuPanel.displaySettingsButton.addActionListener(e -> WaveAPI.showPanel(displaySettingsPanel.self));
+
+        // Device Settings
+        deviceSettingsPanel deviceSettingsPanel = new deviceSettingsPanel(midiConnector);
+        menuPanel.deviceSettingsButton.addActionListener(e -> WaveAPI.showPanel(deviceSettingsPanel.self));
+        deviceSettingsPanel.refresh();
+
+        // Keybindings Manual
+        keybindingsPanel keybindingsPanel = new keybindingsPanel();
+        menuPanel.keybindsButton.addActionListener(e -> WaveAPI.showPanel(keybindingsPanel.self));
+
+        // Developer Functions
+        developerPanel developerPanel = new developerPanel();
+        menuPanel.developerButton.addActionListener(e -> WaveAPI.showPanel(developerPanel.self));
+        developerPanel.closeCameraButton.addActionListener(e -> ProcessController.endCameraProcess());
+        developerPanel.closeVoiceButton.addActionListener(e -> ProcessController.endVoiceProcess());
+
+        // Credits
+        creditsPanel creditsPanel = new creditsPanel();
+        menuPanel.creditsButton.addActionListener(e -> WaveAPI.showPanel(creditsPanel.self));
+
+        // Add panels via WaveGraphics
+        WaveGraphics.addChild(menuPanel.rightContainer, keybindingsPanel.self);
+        WaveGraphics.addChild(menuPanel.rightContainer, displaySettingsPanel.self);
+        WaveGraphics.addChild(menuPanel.rightContainer, deviceSettingsPanel.self);
+        WaveGraphics.addChild(menuPanel.rightContainer, developerPanel.self);
+        WaveGraphics.addChild(menuPanel.rightContainer, creditsPanel.self);
 
         // Test manipulating exposed elements
-        menuPanel.resumeButton.addActionListener(e -> WaveAPI.showCard(mainCanvas,"mainPanel"));
-
-        // Initialise the mainPanel
-        mainPanel mainPanel = new mainPanel();
+        menuPanel.resumeButton.addActionListener(e -> WaveAPI.showPanel(mainPanel.self));
 
         // Add the frames to the main AppCanvas
         mainCanvas.add(menuPanel.self, "menuPanel");
@@ -85,26 +132,15 @@ public class Main
         customRenderer.start();
 
         // Setup some other stuff
-        System.setProperty("sun.java2d.opengl", "True");
+        WaveAPI.showPanel(creditsPanel.self);
+
         MidiPlayer midiPlayer = new MidiPlayer();
-
-        MidiInputReceiver testReceiver = midiConnector.findReceiver("Wave MIDI Experiment");
-        if (testReceiver != null)
-        {
-            testReceiver.startListening();
-            //midiConnector.printReceivers();
-            Wave.setMidiInputReceiver(testReceiver);
-        }
-        else
-        {
-            midiConnector.printReceivers();
-        }
-
         Wave.setVisualiser(mainPanel.visualiser);
         Wave.setMidiPlayer(midiPlayer);
-        Wave.setMidiSequence("main/assets/midi-library/pattern 9.mid");
+        Wave.setMidiSequence("main/resources/midi-library/pattern 9.mid");
         Wave.loadNoteActions();
         Wave.startMidiSequence();
         Wave.enableFeedback(true);
+        displaySettingsPanel.setButton.addActionListener(e -> displaySettingsPanel.applyInput(Wave.visualiser));
     }
 }

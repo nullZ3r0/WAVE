@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
@@ -81,6 +82,7 @@ public class WaveGraphics extends Thread
     {
         // Check if the component actually exists
         if (object == null) {return;}
+        if (!object.isVisible()) {return;}
 
         /** Update AppFrames **/
         if (object.getClass() == AppFrame.class)
@@ -109,6 +111,26 @@ public class WaveGraphics extends Thread
             if (button.useTransform() == true)
             {
                 applyTransform((Component) button, button.transform);
+            }
+        }
+
+        /** Update AppLabel */
+        else if (object.getClass() == AppLabel.class)
+        {
+            AppLabel label = (AppLabel) object;
+            if (label.useTransform() == true)
+            {
+                applyTransform((Component) label, label.transform);
+            }
+        }
+
+        /** Update AppTextField */
+        else if (object.getClass() == AppTextField.class)
+        {
+            AppTextField textField = (AppTextField) object;
+            if (textField.useTransform() == true)
+            {
+                applyTransform((Component) textField, textField.transform);
             }
         }
     }
@@ -274,6 +296,7 @@ public class WaveGraphics extends Thread
     {
         // Check if the component actually exists
         if (object == null) {return;}
+        if (!object.isVisible()) {return;}
 
         int width = object.getWidth();
         int height = object.getHeight();
@@ -471,6 +494,17 @@ public class WaveGraphics extends Thread
             graphics.drawString(arrangementZoom, width - 16 - fontMetrics.stringWidth(arrangementZoom), 24 + 1);
             graphics.drawString(arrangementSpeed, width - 16 - fontMetrics.stringWidth(arrangementSpeed), 52 + 1);
         }
+
+        else if (object.getClass() == AppLabel.class)
+        {
+
+        }
+
+        else if(object.getClass().isAssignableFrom(JComponent.class))
+        {
+            JComponent jObject = (JComponent) object;
+            jObject.paint(graphics);
+        }
     }
 
     // Object stuff
@@ -504,6 +538,24 @@ public class WaveGraphics extends Thread
             childVisualiser.useWaveGraphics(true);
             childVisualiser.useTransform(true);
         }
+        else if (child.getClass() == AppLabel.class)
+        {
+            AppLabel childLabel = (AppLabel) child;
+            childLabel.useWaveGraphics(true);
+            childLabel.useTransform(true);
+        }
+        else if (child.getClass() == AppTextField.class)
+        {
+            AppTextField textField = (AppTextField) child;
+            textField.useWaveGraphics(true);
+            textField.useTransform(true);
+        }
+    }
+
+    public static void removeChild(Container parent, Component child)
+    {
+        parent.remove(child);
+        objects.remove(child);
     }
 
     private boolean enableHighQuality = true;
@@ -533,8 +585,7 @@ public class WaveGraphics extends Thread
 
                 if (enableHighQuality)
                 {
-                    // Runs at a consistent 60fps using an expensive method
-                    Thread.sleep(0);
+                    // Runs at a consistent 60fps using an expensive method);
                     long start = System.nanoTime();
                     long end = 0;
                     do
@@ -546,16 +597,19 @@ public class WaveGraphics extends Thread
                 }
                 else
                 {
-                    // Runs at a consistent 30fps using Thread.sleep
-                    Thread.sleep(32); // Around (30 fps)
+                    try
+                    {
+                        // Runs at a consistent 30fps using Thread.sleep
+                        Thread.sleep(32); // Around (30 fps)
+                        //Thread.sleep(16); // Around (60 fps)
+                        //Thread.sleep(32); // Around (30 fps)
+                        //Thread.sleep(20); // Around (20 fps)
+                    }
+                    catch (InterruptedException e)
+                    {
+                        System.out.println("WaveGraphics was interrupted!");
+                    }
                 }
-                //Thread.sleep(16); // Around (60 fps)
-                //Thread.sleep(32); // Around (30 fps)
-                //Thread.sleep(20); // Around (20 fps)
-            }
-            catch (InterruptedException e)
-            {
-                System.out.println("WaveGraphics was interrupted!");
             }
             catch (ConcurrentModificationException e)
             {

@@ -1,8 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 public class AppWindow extends JFrame
 {
+    private boolean isMain = false;
     public AppWindow()
     {
         // Initialise components

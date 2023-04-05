@@ -3,6 +3,8 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 class TempoAction
@@ -68,6 +70,28 @@ class PianoAction
     }
 }
 
+class PianoEvent
+{
+    public ArrayList<PianoAction> events;
+    public long tick = 0;
+
+    PianoEvent()
+    {
+
+    }
+
+    PianoEvent(long tick, ArrayList<PianoAction> events)
+    {
+        this.tick = tick;
+        this.events = events;
+    }
+
+    public long getTick()
+    {
+        return this.tick;
+    }
+}
+
 public class MidiSequence implements Runnable
 {
     private File midiFile;
@@ -82,9 +106,12 @@ public class MidiSequence implements Runnable
     private double tickDuration = 5; // In milliseconds
     private int tickMultiplier = 100;
     private long currentTick = -512;
+
+    private PianoEvent nextEvent = null;
     private long duration = 0;
     private HashMap<Long, ArrayList<PianoAction>> pianoEvents = new HashMap<Long, ArrayList<PianoAction>>();
     public ArrayList<PianoAction> pianoActions = new ArrayList<PianoAction>();
+    public ArrayList<PianoEvent> quickPianoEvents = new ArrayList<>();
     private HashMap<Long, ArrayList<TempoAction>> tempoEvents = new HashMap<Long, ArrayList<TempoAction>>();
     public ArrayList<TempoAction> tempoActions = new ArrayList<TempoAction>();
     public ArrayList<PianoAction> noteActions = new ArrayList<PianoAction>();
@@ -110,6 +137,8 @@ public class MidiSequence implements Runnable
             this.currentTick = -this.getTickPerBar();
             Wave.tickUpdate(this.currentTick);
             Wave.beatsPerMinuteUpdate(this.beatsPerMinute);
+
+            this.createQuickPianoEvents();
         }
         catch (InvalidMidiDataException e)
         {
@@ -145,6 +174,28 @@ public class MidiSequence implements Runnable
         }
 
         event.add(action);
+    }
+
+    private void createQuickPianoEvents()
+    {
+        this.quickPianoEvents.clear();
+
+        for (long tick : pianoEvents.keySet())
+        {
+            ArrayList<PianoAction> pianoEvent = pianoEvents.get(tick);
+            if (pianoEvent != null)
+            {
+                PianoEvent newPianoEvent = new PianoEvent(tick, pianoEvent);
+                this.quickPianoEvents.add(newPianoEvent);
+            }
+        }
+
+        Collections.sort(this.quickPianoEvents, Comparator.comparing(PianoEvent::getTick));
+
+        if (this.quickPianoEvents.size() > 0)
+        {
+            this.nextEvent = this.quickPianoEvents.get(0);
+        }
     }
 
     private void addTempoAction(long tick, TempoAction tempoAction)
@@ -387,13 +438,26 @@ public class MidiSequence implements Runnable
                 else
                 {
                     Wave.tickUpdate(currentTick);
-                    ArrayList<PianoAction> pianoEvent = pianoEvents.get(currentTick);
 
-                    if (pianoEvent != null)
+                    if (this.quickPianoEvents.size() > 0)
                     {
-                        for (PianoAction pianoAction : pianoEvent)
+                        if (nextEvent.tick == currentTick)
                         {
-                            Wave.changeMidiKeyboardPressed(pianoAction);
+                            int nextIndex = this.quickPianoEvents.indexOf(nextEvent) + 1;
+
+                            ArrayList<PianoAction> pianoEvent = nextEvent.events;
+                            if (pianoEvent != null)
+                            {
+                                for (PianoAction pianoAction : pianoEvent)
+                                {
+                                    Wave.changeMidiKeyboardPressed(pianoAction);
+                                }
+                            }
+
+                            if (nextIndex < this.quickPianoEvents.size())
+                            {
+                                nextEvent = this.quickPianoEvents.get(nextIndex);
+                            }
                         }
                     }
 
@@ -461,6 +525,7 @@ public class MidiSequence implements Runnable
         this.pause = true;
         Wave.refreshKeyboards();
         Wave.tickUpdate(currentTick);
+        this.createQuickPianoEvents();
     }
 
     public void end()
