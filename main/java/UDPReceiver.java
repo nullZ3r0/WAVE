@@ -84,6 +84,9 @@ public class UDPReceiver implements Runnable // Receieves messages
                                 WaveAPI.stringToAction(programMsg);
                                 System.out.println("[packet] Message type: "+ programFlag + " | Message: " + programMsg);
                                 break;
+                            case "Gesture":
+                                // Do stuff
+                                break;
                         }
                     }
                 }
