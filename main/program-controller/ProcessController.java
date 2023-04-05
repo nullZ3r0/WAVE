@@ -33,17 +33,44 @@ public class ProcessController
         System.out.println("[i] Applying duct tape");
         // This will end all processes that share any of the names of the default processes
         // Definitely not be a duct tage solution to lingering pyhelper_voice processes :)
+
+        endCameraProcess();
+        endVoiceProcess();
+    }
+
+    public static void endCameraProcess()
+    {
+        //System.out.println("[i] Stopping pyhelper_gestures processes");
+        // This will end all processes that are named pyhelper_gestures
+        String end = ".exe";
+
+        try
+        {
+            // Execute taskkill command to kill processes with the given name
+            Process process1 = Runtime.getRuntime().exec("taskkill /F /IM pyhelper_gestures"+end);
+
+            // Wait for the command to finish
+            process1.waitFor();
+        }
+        catch (IOException | InterruptedException e)
+        {
+
+        }
+    }
+
+    public static void endVoiceProcess()
+    {
+        //System.out.println("[i] Stopping pyhelper_voice processes");
+        // This will end all processes that are named pyhelper_gestures
         String end = ".exe";
 
         try
         {
             // Execute taskkill command to kill processes with the given name
             Process process1 = Runtime.getRuntime().exec("taskkill /F /IM pyhelper_voice"+end);
-            Process process2 = Runtime.getRuntime().exec("taskkill /F /IM pyhelper_gestures"+end);
 
             // Wait for the command to finish
             process1.waitFor();
-            process2.waitFor();
         }
         catch (IOException | InterruptedException e)
         {

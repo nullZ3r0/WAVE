@@ -5,7 +5,7 @@ public class menuPanel
 {
     public AppFrame self;
 
-    // You can expose elements of the panel, this allows them to be accessed by other classes (most importantly main)
+    // You can expose elements of the panel, this allows them to be accessed by other classes (most importantly Main)
     // Example below
     public AppButton resumeButton;
     public AppButton deviceSettingsButton;
@@ -13,6 +13,7 @@ public class menuPanel
     public AppButton keybindsButton;
     public AppButton creditsButton;
     public AppFrame rightContainer;
+    public AppButton developerButton;
 
     menuPanel()
     {
@@ -54,6 +55,9 @@ public class menuPanel
         keybindsButton = new AppButton("Keybinds");
         keybindsButton.transform.setSize(defaultSize);
 
+        developerButton = new AppButton("Developer Panel");
+        developerButton.transform.setSize(defaultSize);
+
         creditsButton = new AppButton("Credits");
         creditsButton.transform.setSize(defaultSize);
 
@@ -61,11 +65,13 @@ public class menuPanel
         exitButton.transform.setSize(defaultSize);
         exitButton.addActionListener(e -> WaveAPI.exit());
 
+        // Add all the buttons the left container
         WaveGraphics.addChild(leftContainer, resumeButton);
         WaveGraphics.addChild(leftContainer, newSessionButton);
         WaveGraphics.addChild(leftContainer, displaySettingsButton);
         WaveGraphics.addChild(leftContainer, deviceSettingsButton);
         WaveGraphics.addChild(leftContainer, keybindsButton);
+        WaveGraphics.addChild(leftContainer, developerButton);
         WaveGraphics.addChild(leftContainer, creditsButton);
         WaveGraphics.addChild(leftContainer, exitButton);
 
@@ -88,11 +94,8 @@ public class menuPanel
         // Set dividerContainer parent
         WaveGraphics.addChild(self, dividerContainer);
 
-
         // Create rightContainer
         rightContainer = new AppFrame();
-        // CardLayout is bugged with WaveGraphics!!!
-        //rightContainer.setLayout(new CardLayout());
         rightContainer.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
         rightContainer.setBackground(AppTheme.backgroundDark1);
         rightContainer.transform.setCornerRadius(8);
