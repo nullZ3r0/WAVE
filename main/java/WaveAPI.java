@@ -46,6 +46,22 @@ public class WaveAPI
                     WaveAPI.showPanel(Main.mainPanel.self);
                 }
                 break;
+            case "signalGestureReady":
+                System.out.println("[i] pyhelper_gestures has loaded");
+                break;
+            case "signalVoiceReady":
+                System.out.println("[i] pyhelper_voice has loaded");
+                break;
+        }
+    }
+
+    public static void stringToAction(String rawString)
+    {
+        String string = rawString.toLowerCase();
+        if (string.matches(".*\\swave\\s.*"))
+        {
+            System.out.println("[i] This is a wave voice command");
+            // do something
         }
     }
 

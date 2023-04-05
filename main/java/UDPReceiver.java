@@ -33,8 +33,8 @@ public class UDPReceiver implements Runnable // Receieves messages
         try
         {
             this.datagramSocket.receive(this.datagramPacket); // Searches for sent packets
-            String msg = new String(this.buffer, 0, this.datagramPacket.getLength()); // Receieves the message sent
-            System.out.println(this.datagramPacket.getAddress().getHostName() + ": " + msg);  // Prints out the message sent
+            String msg = new String(this.buffer, 0, this.datagramPacket.getLength()); // Receives the message sent
+            //System.out.println(this.datagramPacket.getAddress().getHostName() + ": " + msg);  // Prints out the message sent
             this.datagramPacket.setLength(buffer.length);
             return msg;
         }
@@ -63,8 +63,31 @@ public class UDPReceiver implements Runnable // Receieves messages
         {
             try
             {
-                this.search();
-                Thread.sleep(3);
+                String result = this.search();
+                if (!result.matches(""))
+                {
+                    String[] data = result.split(":");
+                    if (data.length == 2)
+                    {
+                        String programFlag = data[0];
+                        String programMsg = data[1];
+
+                        switch (programFlag)
+                        {
+                            case "AppID G":
+                                WaveAPI.fireAction("signalGestureReady");
+                                break;
+                            case "AppID V":
+                                WaveAPI.fireAction("signalVoiceReady");
+                                break;
+                            case "Voice":
+                                WaveAPI.stringToAction(programMsg);
+                                System.out.println("[packet] Message type: "+ programFlag + " | Message: " + programMsg);
+                                break;
+                        }
+                    }
+                }
+                Thread.sleep(1);
             }
             catch (InterruptedException e)
             {

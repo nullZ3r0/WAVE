@@ -24,14 +24,35 @@ public class ProcessController
     {
         for (Process process : processArrayList)
         {
-            if (process.isAlive())
-            {
-                process.destroyForcibly();
-            }
+            process.destroyForcibly();
         }
     }
 
-    public static void startDefaultProcesses(Boolean start) {
+    public static void defaultClean()
+    {
+        System.out.println("[i] Applying duct tape");
+        // This will end all processes that share any of the names of the default processes
+        // Definitely not be a duct tage solution to lingering pyhelper_voice processes :)
+        String end = ".exe";
+
+        try
+        {
+            // Execute taskkill command to kill processes with the given name
+            Process process1 = Runtime.getRuntime().exec("taskkill /F /IM pyhelper_voice"+end);
+            Process process2 = Runtime.getRuntime().exec("taskkill /F /IM pyhelper_gestures"+end);
+
+            // Wait for the command to finish
+            process1.waitFor();
+            process2.waitFor();
+        }
+        catch (IOException | InterruptedException e)
+        {
+
+        }
+    }
+
+    public static void startDefaultProcesses(Boolean start)
+    {
         if (start)
         {
             startDefaultProcesses();

@@ -30,7 +30,7 @@ public class Main
         UDPReceiver udpReceiver = new UDPReceiver(5005);
         udpReceiver.start();
 
-        ProcessController.startDefaultProcesses(false);
+        ProcessController.startDefaultProcesses(true);
 
         Runtime.getRuntime().addShutdownHook(new Thread()
         {
@@ -39,6 +39,7 @@ public class Main
                 // Cleanup code
                 System.out.println("[i] Stopping Sub Programs");
                 ProcessController.endAll();
+                ProcessController.defaultClean();
                 System.out.println("[i] Closing WAVE");
                 udpReceiver.stop();
             }
