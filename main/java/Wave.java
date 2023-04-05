@@ -161,6 +161,14 @@ public class Wave
         }
     }
 
+    public static void resumeMidiSequence()
+    {
+        if (midiSequenceExists() && midiSequence.isRunning())
+        {
+            midiSequence.play();
+        }
+    }
+
     public static void restartMidiSequence()
     {
         if (midiSequenceExists() && midiSequence.isRunning())

@@ -525,6 +525,7 @@ public class MidiSequence implements Runnable
         this.pause = true;
         Wave.refreshKeyboards();
         Wave.tickUpdate(currentTick);
+        this.createQuickPianoEvents();
     }
 
     public void end()

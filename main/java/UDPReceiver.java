@@ -87,7 +87,7 @@ public class UDPReceiver implements Runnable // Receieves messages
                         }
                     }
                 }
-                Thread.sleep(1);
+                Thread.sleep(5);
             }
             catch (InterruptedException e)
             {
