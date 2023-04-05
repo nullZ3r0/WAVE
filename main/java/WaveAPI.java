@@ -78,7 +78,7 @@ public class WaveAPI
         String string = rawString.toLowerCase();
         if (containsFlag(string, "wave") || containsFlag(string, "waves") || listening)
         {
-            System.out.println("[i] This is a wave voice command");
+            System.out.println("[i] Wave heard a potential command");
             if (containsFlag(string, "play") || containsFlag(string, "resume") || containsFlag(string, "start") || containsFlag(string, "continue"))
             {
                 fireAction("play");
