@@ -25,6 +25,11 @@ public class Main
     public static void main(String[] args)
     {
         System.out.println("[i] Starting WAVE");
+
+        // Initialise UDPReceiver
+        UDPReceiver udpReceiver = new UDPReceiver(5005);
+        udpReceiver.start();
+
         ProcessController.startDefaultProcesses(false);
 
         Runtime.getRuntime().addShutdownHook(new Thread()
@@ -35,11 +40,12 @@ public class Main
                 System.out.println("[i] Stopping Sub Programs");
                 ProcessController.endAll();
                 System.out.println("[i] Closing WAVE");
+                udpReceiver.stop();
             }
         });
         setupWindowTheme();
 
-        // Midi testing
+        // Initialise Midi Connector
         midiConnector = new MidiConnector();
 
         // Initialise custom render thread
@@ -95,11 +101,16 @@ public class Main
         menuPanel.deviceSettingsButton.addActionListener(e -> WaveAPI.showPanel(deviceSettingsPanel.self));
         deviceSettingsPanel.refresh();
 
+        // Keybindings Manual
+        keybindingsPanel keybindingsPanel = new keybindingsPanel();
+        menuPanel.keybindsButton.addActionListener(e -> WaveAPI.showPanel(keybindingsPanel.self));
+
         // Credits
         creditsPanel creditsPanel = new creditsPanel();
         menuPanel.creditsButton.addActionListener(e -> WaveAPI.showPanel(creditsPanel.self));
 
         // Add panels via WaveGraphics
+        WaveGraphics.addChild(menuPanel.rightContainer, keybindingsPanel.self);
         WaveGraphics.addChild(menuPanel.rightContainer, displaySettingsPanel.self);
         WaveGraphics.addChild(menuPanel.rightContainer, deviceSettingsPanel.self);
         WaveGraphics.addChild(menuPanel.rightContainer, creditsPanel.self);

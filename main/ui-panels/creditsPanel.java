@@ -24,17 +24,17 @@ public class creditsPanel
 
         String[] creditList =
                 {
-                "Alan Robinson - Lead Java Programmer",
-                "Lukas Maslianikas - Lead Python Programmer",
-                "Shriharsh Shriharsh - Project Manager",
-                "Hanan Lalo - Lead Report Editor",
-                "Fayad Mususwa - Creative Lead"
+                    "[Project Manager]  Shriharsh Shriharsh",
+                    "[Lead Programmer]  Alan Robinson",
+                    "[Programmer]   Lukas Maslianikas",
+                    "[Project Team Member]   Hanan Lalo",
+                    "[Project Team Member]   Fayad Mususwa"
                 };
 
         for (String name : creditList)
         {
             AppLabel selectedLabel = new AppLabel(name);
-            selectedLabel.setHorizontalAlignment(SwingConstants.LEFT);
+            selectedLabel.setHorizontalAlignment(SwingConstants.CENTER);
             selectedLabel.setFont(AppTheme.textFont.deriveFont(Font.PLAIN, 16));
             selectedLabel.transform.setSize(-48, 32, 1, 0);
             WaveGraphics.addChild(self, selectedLabel);

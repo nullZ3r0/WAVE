@@ -53,8 +53,6 @@ public class menuPanel
 
         keybindsButton = new AppButton("Keybinds");
         keybindsButton.transform.setSize(defaultSize);
-        keybindsButton.setEnabled(false);
-        keybindsButton.addActionListener(e -> WaveAPI.debugButton());
 
         creditsButton = new AppButton("Credits");
         creditsButton.transform.setSize(defaultSize);
