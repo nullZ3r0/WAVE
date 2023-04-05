@@ -9,6 +9,7 @@ public class menuPanel
     // Example below
     public AppButton resumeButton;
     public AppButton deviceSettingsButton;
+    public AppButton displaySettingsButton;
     public AppButton keybindsButton;
     public AppButton creditsButton;
     public AppFrame rightContainer;
@@ -44,10 +45,8 @@ public class menuPanel
         newSessionButton.transform.setSize(defaultSize);
         newSessionButton.addActionListener(e -> WaveAPI.fireAction("openFileChooser"));
 
-        AppButton displaySettingsButton = new AppButton("Display Settings");
+        displaySettingsButton = new AppButton("Display Settings");
         displaySettingsButton.transform.setSize(defaultSize);
-        displaySettingsButton.setEnabled(false);
-        displaySettingsButton.addActionListener(e -> WaveAPI.debugButton());
 
         deviceSettingsButton = new AppButton("Device Settings");
         deviceSettingsButton.transform.setSize(defaultSize);

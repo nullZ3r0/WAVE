@@ -10,17 +10,12 @@ public class AppTextField extends JTextField
 
     public AppTextField()
     {
-        this.setBackground(AppTheme.frame.background);
+        this.setBackground(AppTheme.transparent);
+        this.setBorder(BorderFactory.createEmptyBorder());
         this.setOpaque(false);
         this.transform = new UITransform();
         this.setFont(AppTheme.textFont.deriveFont(Font.PLAIN, 16));
-        this.setHorizontalAlignment(SwingConstants.CENTER);
-    }
-
-    public AppTextField(String text)
-    {
-        this();
-        this.setText(text);
+        this.setHorizontalAlignment(SwingConstants.LEFT);
     }
 
     // Custom render

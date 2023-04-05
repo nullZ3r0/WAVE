@@ -123,6 +123,16 @@ public class WaveGraphics extends Thread
                 applyTransform((Component) label, label.transform);
             }
         }
+
+        /** Update AppTextField */
+        else if (object.getClass() == AppTextField.class)
+        {
+            AppTextField textField = (AppTextField) object;
+            if (textField.useTransform() == true)
+            {
+                applyTransform((Component) textField, textField.transform);
+            }
+        }
     }
 
     private static void drawPianoKey(Graphics2D graphics, Rectangle bounds, PianoAction pianoAction, long tickCurrent)
@@ -533,6 +543,12 @@ public class WaveGraphics extends Thread
             AppLabel childLabel = (AppLabel) child;
             childLabel.useWaveGraphics(true);
             childLabel.useTransform(true);
+        }
+        else if (child.getClass() == AppTextField.class)
+        {
+            AppTextField textField = (AppTextField) child;
+            textField.useWaveGraphics(true);
+            textField.useTransform(true);
         }
     }
 

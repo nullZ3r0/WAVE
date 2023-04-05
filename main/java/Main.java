@@ -54,7 +54,6 @@ public class Main
         // Initialise application window
         AppWindow mainWindow = new AppWindow();
         //mainWindow.setExtendedState(mainWindow.getExtendedState() | JFrame.MAXIMIZED_BOTH);
-
         // DO NOT change this to be LOWER THAN 1000 x 600!
         mainWindow.setMinimumSize(new Dimension(1000, 600));
 
@@ -87,11 +86,21 @@ public class Main
         mainPanel = new mainPanel();
 
         // Initialise the menuPanel child panels
+        // Display Settings
+        displaySettingsPanel displaySettingsPanel = new displaySettingsPanel();
+        menuPanel.displaySettingsButton.addActionListener(e -> WaveAPI.showPanel(displaySettingsPanel.self));
+
+        // Device Settings
         deviceSettingsPanel deviceSettingsPanel = new deviceSettingsPanel(midiConnector);
         menuPanel.deviceSettingsButton.addActionListener(e -> WaveAPI.showPanel(deviceSettingsPanel.self));
         deviceSettingsPanel.refresh();
+
+        // Credits
         creditsPanel creditsPanel = new creditsPanel();
         menuPanel.creditsButton.addActionListener(e -> WaveAPI.showPanel(creditsPanel.self));
+
+        // Add panels via WaveGraphics
+        WaveGraphics.addChild(menuPanel.rightContainer, displaySettingsPanel.self);
         WaveGraphics.addChild(menuPanel.rightContainer, deviceSettingsPanel.self);
         WaveGraphics.addChild(menuPanel.rightContainer, creditsPanel.self);
 
@@ -115,5 +124,7 @@ public class Main
         Wave.loadNoteActions();
         Wave.startMidiSequence();
         Wave.enableFeedback(true);
+
+        displaySettingsPanel.setButton.addActionListener(e -> displaySettingsPanel.applyInput(Wave.visualiser));
     }
 }
