@@ -1,12 +1,14 @@
 import java.io.IOException;
-import java.net.DatagramPacket; // Imports
-import java.net.DatagramSocket; // Imports
+import java.net.InetAddress;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class UDPReceiver implements Runnable // Receieves messages
 {
     int port = 0;
+    InetAddress localhost = InetAddress.getByName("127.0.0.1");
     byte[] buffer = new byte[2048];
     private final AtomicBoolean running = new AtomicBoolean(false);
     DatagramSocket datagramSocket;
@@ -18,7 +20,7 @@ public class UDPReceiver implements Runnable // Receieves messages
         this.port = port;
         try
         {
-            this.datagramSocket = new DatagramSocket(this.port);
+            this.datagramSocket = new DatagramSocket(this.port, this.localhost);
             this.datagramPacket = new DatagramPacket(this.buffer, this.buffer.length);
         }
         catch
